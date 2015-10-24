@@ -5,6 +5,19 @@ Centro is a software engineering project on which 5 Imperial College students ar
 
 ----------
 Requirements
-------------------
+----------
+
  - Java JDK (1.7 or above)
  - Maven (Help: https://maven.apache.org/guides/getting-started/maven-in-five-minutes.html)
+
+----------
+Build
+----------
+- Download & install all maven dependencies :
+    ```sh
+    mvn clean install
+    ```
+- Build and Create .war file
+    ```sh
+    mvn package
+    ```
