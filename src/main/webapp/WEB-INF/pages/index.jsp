@@ -1,12 +1,13 @@
 <!DOCTYPE html>
+<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <html>
 <head>
 <meta charset="utf-8">
 <title>Basic Bootstrap Template</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<link rel="stylesheet" type="text/css" href="pages/frameworks/bootstrap-3.3.5-dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="<c:url value='/resources/bootstrap/css/bootstrap.min.css'/>">
 <!-- Optional Bootstrap theme -->
-<link rel="stylesheet" href="pages/frameworks/bootstrap-3.3.5-dist/css/bootstrap-theme.min.css">
+<link rel="stylesheet" href="<c:url value='/resources/bootstrap/css/bootstrap-theme.min.css'/>">
 </head>
 <body>
 	<h1>Hello, world!</h1>
@@ -24,7 +25,7 @@
 		</div>
 		<button type="submit" class="btn btn-default">Submit</button>
 	</form>
-	<script src="pages/frameworks/bootstrap-3.3.5-dist/js/jquery-1.11.3.min.js"></script>
-	<script src="pages/frameworks/bootstrap-3.3.5-dist/js/bootstrap.min.js"></script>
+        <script src="<c:url value='/resources/jquery/jquery.min.js'/>" />
+        <script src="<c:url value='/resources/bootstrap/js/bootstrap.min.js'/>" />
 </body>
 </html>
