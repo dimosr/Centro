@@ -14,10 +14,10 @@ Requirements
 Build
 ----------
 - Download & install all maven dependencies :
-    ```sh
-    mvn clean install
-    ```
+```sh
+mvn clean install
+```
 - Build and Create .war file
-    ```sh
-    mvn package
-    ```
+```sh
+mvn package
+```
