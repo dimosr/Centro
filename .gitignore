@@ -2,3 +2,9 @@ target/
 
 #IDE configuration files
 nb-configuration.xml
+
+# Eclipse
+.project
+.classpath
+.settings
+.settings/
