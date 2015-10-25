@@ -1,0 +1,4 @@
+target/
+
+#IDE configuration files
+nb-configuration.xml
