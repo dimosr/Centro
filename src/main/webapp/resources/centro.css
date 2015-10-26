@@ -1,0 +1,122 @@
+/**
+ * Centro CSS
+ * 
+ * Colors ref:
+ * Orange: #F6A900
+ * Darker orange: #CF8000
+ *
+ * Blue: #7FDBDC
+ * Darker blue: #4BB2B3
+ *
+ */
+
+html {
+	width: 100%;
+    height: 100%;
+}
+
+body {
+    width: 100%;
+    min-height: 100%;
+    margin: 0;
+    padding: 0;
+    font-family: 'Fira Sans', sans-serif;
+}
+
+#map {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+}
+
+.grey-bkg {
+	position: absolute;
+	top: 0;
+	left: 50%;
+	background: rgba(28,49,68,0.6);
+	min-height: 100%;
+	width: 600px;
+	margin-left: -300px;
+}
+
+@media screen and (max-width: 600px) {
+	.grey-bkg {
+		left: 0;
+		margin: 0;
+		width: 100%;
+	}
+}
+
+.logo-container {
+	margin-top: 25px;
+	text-align: center;
+}
+
+.logo-container img {
+	display: inline-block;
+	max-width: 70%;
+}
+
+@media screen and (max-width: 992px) {
+	.logo-container img {
+		max-width: 50%;
+	}
+}
+
+@media screen and (max-width: 600x) {
+	.logo-container img {
+		max-width: 30%;
+	}
+}
+
+.logo-container p {
+	margin-top: 25px;
+	margin-bottom: 25px;
+	font-size: 1.3em;
+	color: #7FDBDC;
+}
+
+#address-form .form-group {
+	width: 80%;
+	margin: 20px auto;
+	position: relative;
+}
+
+#home-addon {
+	position: absolute;
+	top: 0.55em;
+	left: 0.5em;
+}
+
+#address-input {
+	padding-left: 2em;
+	display: inline-block;
+	padding-right: 45px;
+}
+
+#add-button {
+	position:absolute;
+	top: 0;
+	right: 0;
+	border-top-left-radius: 0;
+	border-bottom-left-radius: 0;
+}
+
+.address {
+	padding: 10px;
+	background: #4BB2B3;
+	color: white;
+	border-radius: 5px;
+	position: relative;
+	margin: 10px;
+}
+
+.address .delete {
+	font-size: 2.5em;
+	line-height: 0.7em;
+	position: absolute;
+	right: 0.2em;
+}
+
