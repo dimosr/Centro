@@ -10,20 +10,17 @@
  *
  */
 
-html, body {
-    width: 100%;
+html {
+	width: 100%;
     height: 100%;
+}
+
+body {
+    width: 100%;
+    min-height: 100%;
     margin: 0;
     padding: 0;
     font-family: 'Fira Sans', sans-serif;
-}
-
-.over-map {
-	position: absolute;
-	top: 0;
-	left: 0;
-	width: 100%;
-	height: 100%;
 }
 
 #map {
@@ -35,8 +32,21 @@ html, body {
 }
 
 .grey-bkg {
+	position: absolute;
+	top: 0;
+	left: 50%;
 	background: rgba(28,49,68,0.6);
-	height: 100%;
+	min-height: 100%;
+	width: 600px;
+	margin-left: -300px;
+}
+
+@media screen and (max-width: 600px) {
+	.grey-bkg {
+		left: 0;
+		margin: 0;
+		width: 100%;
+	}
 }
 
 .logo-container {
@@ -46,6 +56,19 @@ html, body {
 
 .logo-container img {
 	display: inline-block;
+	max-width: 70%;
+}
+
+@media screen and (max-width: 992px) {
+	.logo-container img {
+		max-width: 50%;
+	}
+}
+
+@media screen and (max-width: 600x) {
+	.logo-container img {
+		max-width: 30%;
+	}
 }
 
 .logo-container p {
@@ -56,7 +79,7 @@ html, body {
 }
 
 #address-form .form-group {
-	max-width: 400px;
+	width: 80%;
 	margin: 20px auto;
 	position: relative;
 }
@@ -69,22 +92,31 @@ html, body {
 
 #address-input {
 	padding-left: 2em;
-	width: 90%;
 	display: inline-block;
-	border-top-right-radius: 0;
-	border-bottom-right-radius: 0;
+	padding-right: 45px;
 }
 
 #add-button {
+	position:absolute;
+	top: 0;
+	right: 0;
 	border-top-left-radius: 0;
 	border-bottom-left-radius: 0;
 }
 
 .address {
-	padding-bottom: 10px;
+	padding: 10px;
+	background: #4BB2B3;
+	color: white;
+	border-radius: 5px;
+	position: relative;
+	margin: 10px;
 }
 
-.address .close {
-	font-size: 1.5em;
+.address .delete {
+	font-size: 2.5em;
+	line-height: 0.7em;
+	position: absolute;
+	right: 0.2em;
 }
 

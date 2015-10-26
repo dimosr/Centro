@@ -15,7 +15,9 @@ var geocoder = new google.maps.Geocoder();
 /* Address addition */
 
 var $address = $('#address-input'),
-	$addressContainer = $('#address-container');
+	$addressContainer = $('#address-container'),
+	bounds = new google.maps.LatLngBounds(),
+	markers = [];
 
 $('#address-form').on('submit', function(e){
       e.preventDefault();
@@ -27,11 +29,32 @@ $('#address-form').on('submit', function(e){
     	  url: url,
     	  success: function(obj){
     		  if (obj.status == 'OK') {
-    			  var results = obj.results[0];
-    			  $addressContainer.append('<div class="alert alert-info alert-dismissible address" data-lat="'+results.geometry.location.lat+'" data-lng="'+results.geometry.location.lng+'">'
-    					  					+'<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>'
+    			  var results = obj.results[0],
+    			  	  lat = results.geometry.location.lat,
+    			  	  lng = results.geometry.location.lng;
+    			  
+    			  $addressContainer.append('<div class="address" data-lat="'+lat+'" data-lng="'+lng+'" data-marker="'+markers.length+'">'
+    					  					+'<div class="delete" aria-label="delete"><span aria-hidden="true">&times;</span></div>'
     					  					+results.formatted_address
-					  						+'</div>')
+					  						+'</div>');
+    			  
+    			  $('.address[data-marker="'+markers.length+'"] .delete').on('click', function() {
+    				  var $div = $(this).parent();
+    				  
+    				  markers[$div.data('marker')].setMap(null);
+    				  $div.remove();
+    			  });
+    			  
+    			  var marker = new google.maps.Marker({
+    				  map: map,
+    				  position: {lat:lat,lng:lng}
+    			  });
+    			  
+    			  markers.push(marker);
+    			  
+    			  bounds.extend(marker.position);
+    			  map.fitBounds(bounds);
+    			  
     			  $address.val(''); 
     		  } else {
     			  alert('Address not found, try to be more precise.')

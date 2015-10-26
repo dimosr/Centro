@@ -20,30 +20,26 @@
 	<!-- Map Container -->
 	<div id="map"></div>
 	
-	<div class="row over-map">
-		<div class="col-md-4 col-md-offset-4 col-sm-6 col-sm-offset-6 grey-bkg">
+	<div class="grey-bkg">
+		<div class="logo-container">
+			<img src="<c:url value='/img/logo.png'/>" />
+			<p>
+				Centro helps you find the best meeting point for you and your friends.<br />
+				It's easy, start by typing your address:
+			</p>
+		</div>
 		
-			<div class="logo-container">
-				<img src="<c:url value='/img/logo.png'/>" class="img-responsive" />
-				<p>
-					Centro helps you find the best meeting point for you and your friends.<br />
-					It's easy, start by typing your address:
-				</p>
+		<form id="address-form">
+			<div class="form-group">
+				<div id="home-addon"><span class="glyphicon glyphicon-home" aria-hidden="true"></span></div>
+				<input type="text" class="form-control" placeholder="My address" id="address-input"><!--
+			 --><button class="btn btn-success" type="submit" id="add-button"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></button>
 			</div>
-			
-			<form id="address-form">
-				<div class="form-group">
-					<div id="home-addon"><span class="glyphicon glyphicon-home" aria-hidden="true"></span></div>
-					<input type="text" class="form-control" placeholder="My address" id="address-input"><!--
-				 --><button class="btn btn-success" type="submit" id="add-button"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></button>
-				</div>
-			</form>
-			
-			<div id="address-container">
-			
-			</div>
-			
-		</div> 
+		</form>
+		
+		<div id="address-container">
+		
+		</div>
 	</div>
 	
 	<script src="<c:url value='/resources/jquery/jquery.min.js'/>"></script>
