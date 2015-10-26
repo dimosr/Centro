@@ -19,23 +19,24 @@ These instructions can guide someone to build & deploy the project without using
 ```
 mvn clean install
 ```
-
 - Build and Create .war file:  
 ```
 mvn package
 ```
-
 - Get `Centro.war` file from `target` folder and copy it in Tomcat `webapps` folder. Startup Tomcat.
 
 ----------
 Build using Eclipse
 ----------
 - Download & extract Eclipse Enterprise Edition (http://www.eclipse.org/downloads/packages/eclipse-ide-java-ee-developers/keplerr)
-- Generate the Eclipse project:
+- Generate the Eclipse project by executing the following command at the root of the project directory:
 ```
 mvn eclipse:eclipse
 ```
-- Import the project in Eclipse and choose "Run on server" then configure a Tomcat 6 server (Tomcat 7 is incompatible with Java 1.7)
+- Import the project in Eclipse (click file -> import -> existing project into workspace)
+- Configure a Tomcat 6 server (Tomcat 7 is incompatible with Java 1.7) (right click in the server tab -> new -> server)
+  (If you don't have tomcat installed, after server -> new, click on add on the right of server runtime environment, then click "Download and install")
+- Click run on server and choose the server you've just configured
 - You're done =D
 
 ------------
