@@ -7,7 +7,7 @@ import java.util.List;
 
 public class MiddlePointCalculator {
 
-	public static GeoCoordinate getMidPoint(List<GeoCoordinate> locations){
+	public GeoCoordinate getMidPoint(List<GeoCoordinate> locations){
             GeoCoordinate midPoint = null ;
             CoordinatesConverter converter = new CoordinatesConverter();
             double sumX=0, sumY=0, sumZ=0;

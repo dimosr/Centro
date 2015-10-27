@@ -2,9 +2,9 @@ package com.centro.util;
 
 public class CartesianCoordinate {
 	
-    double x;
-    double y;
-    double z;
+    private double x;
+    private double y;
+    private double z;
 	
     public CartesianCoordinate(double xCartesian, double yCartesian, double zCartesian) {
         x = xCartesian;

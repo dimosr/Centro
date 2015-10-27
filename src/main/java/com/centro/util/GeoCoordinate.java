@@ -2,8 +2,8 @@ package com.centro.util;
 
 public class GeoCoordinate {
 	
-    double latitude;
-    double longitude;
+    private double latitude;
+    private double longitude;
         
     public GeoCoordinate(double lat, double lon) {
         latitude=lat;
