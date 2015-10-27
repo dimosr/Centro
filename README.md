@@ -20,6 +20,11 @@ These instructions can guide someone to build & deploy the project without using
 mvn clean install
 ```
 
+- Execute all unit tests
+```
+mvn test
+```
+
 - Build and Create .war file (all unit tests will be executed):  
 ```
 mvn package
@@ -52,5 +57,7 @@ Build using Netbeans
 	1. Project Properties -> Run -> setup Tomcat as Server of this project
 	2. Project Properties -> Actions -> Run Project -> Execute Goals (add "package")
 	3. Project Properties -> Actions -> Build Project -> Execute Goals (add "package")
-- Select "Build Project" to run all Unit Tests and build the project
+	4. Project Properties -> Actions -> Test Project -> Execute Goals (add "test")
+- Select "Build Project" to build the project
+- Select "Test Project" to execute all Unit Tests
 - Select "Run Project" through Netbeans. Application is now deployed in Tomcat.
