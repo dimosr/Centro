@@ -4,8 +4,10 @@ import com.centro.util.CartesianCoordinate;
 import com.centro.util.CoordinatesConverter;
 import com.centro.util.GeoCoordinate;
 import java.util.List;
+import org.springframework.stereotype.Component;
 
-public class MiddlePointCalculator {
+@Component("middlePointCalculator")
+public class MiddlePointCalculator implements CentralPointCalculator {
 
 	public GeoCoordinate getMidPoint(List<GeoCoordinate> locations){
             GeoCoordinate midPoint = null ;
@@ -26,6 +28,8 @@ public class MiddlePointCalculator {
             return midPoint;		
 	}
         
-        
+        public GeoCoordinate getCentralPoint(List<GeoCoordinate> locations) {
+            return getMidPoint(locations);
+        }
 
 }
