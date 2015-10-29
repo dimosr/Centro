@@ -23,9 +23,12 @@
 	<div class="grey-bkg">
 		<div class="logo-container">
 			<img src="<c:url value='/img/logo.png'/>" />
-			<p>
+			<p id="first-desc">
 				Centro helps you find the best meeting point for you and your friends.<br />
 				It's easy, start by typing your address:
+			</p>
+			<p id="snd-desc">
+				You can add more addresses, when you're done click <button class="btn btn-default" id="submit">I'm done!</button>
 			</p>
 		</div>
 		

@@ -118,5 +118,9 @@ body {
 	line-height: 0.7em;
 	position: absolute;
 	right: 0.2em;
+	cursor: pointer;
 }
 
+#snd-desc {
+	display: none;
+}

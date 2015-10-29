@@ -16,6 +16,8 @@ var geocoder = new google.maps.Geocoder();
 
 var $address = $('#address-input'),
 	$addressContainer = $('#address-container'),
+	$firstDescContainer = $('#first-desc'),
+	$sndDescContainer = $('#snd-desc'),
 	bounds = new google.maps.LatLngBounds(),
 	markers = [];
 
@@ -38,11 +40,20 @@ $('#address-form').on('submit', function(e){
     					  					+results.formatted_address
 					  						+'</div>');
     			  
+    			  $firstDescContainer.fadeOut(function(){
+    				  $sndDescContainer.fadeIn();
+    			  });
+    				  
     			  $('.address[data-marker="'+markers.length+'"] .delete').on('click', function() {
     				  var $div = $(this).parent();
     				  
     				  markers[$div.data('marker')].setMap(null);
     				  $div.remove();
+    				  if ($addressContainer.html().trim() == '') {
+    					  $sndDescContainer.fadeOut(function() {
+    						  $firstDescContainer.fadeIn();
+    					  });
+    				  }
     			  });
     			  
     			  var marker = new google.maps.Marker({
@@ -60,5 +71,28 @@ $('#address-form').on('submit', function(e){
     			  alert('Address not found, try to be more precise.')
     		  }
     	  }
-      });
+     });
+});
+
+/* Send Form */
+
+var $submit = $('#submit');
+
+$submit.on('click', function() {
+	var json = [];
+	$('.address').each(function() {
+		var $this = $(this);
+		json.push({'latitude':$this.data('lat'), 'longitude': $this.data('lng')});
+	});
+	
+	$.ajax({
+  	  url: 'api/central',
+  	  dataType : 'json',
+  	  type: 'POST',
+	  success: function(obj){
+		 // PROCESS RESULT HERE
+		  alert();
+		  console.log(obj);
+	  }
+	});
 });
