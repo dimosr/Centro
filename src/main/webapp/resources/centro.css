@@ -39,6 +39,15 @@ body {
 	min-height: 100%;
 	width: 600px;
 	margin-left: -300px;
+	-webkit-transition: all 1s ease-in-out;
+	-moz-transition: all 1s ease-in-out;
+	-o-transition: all 1s ease-in-out;
+	transition: all 1s ease-in-out;
+}
+
+.grey-bkg.result-displayed {
+	left: 0;
+	margin: 0;
 }
 
 @media screen and (max-width: 600px) {

@@ -49,5 +49,8 @@
 	<script src="<c:url value='/resources/bootstrap/js/bootstrap.min.js'/>"></script>
 	<script src="https://maps.googleapis.com/maps/api/js?v=3.exp"></script>
 	<script src="<c:url value='/resources/centro.js'/>"></script>
+	<script>
+		var resMarkerIcon = "<c:url value='/img/marker.png'/>"
+	</script>
 </body>
 </html>
