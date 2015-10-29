@@ -82,29 +82,29 @@ var res_marker = false,
 $submit.on('click', function() {
     var json = [];
     
-	$('.address').each(function() {
-		var $this = $(this);
-		json.push({"latitude":$this.data('lat'), "longitude": $this.data('lng')});
-	});
+    $('.address').each(function() {
+	var $this = $(this);
+	json.push({"latitude":$this.data('lat'), "longitude": $this.data('lng')});
+    });
 	
-	$.ajax({
-  	  url: 'api/central',
-  	  dataType : 'json',
-          contentType: "application/json;charset=utf-8",
-  	  type: 'POST',
-      data: JSON.stringify(json),
-	  success: function(res){
-		  if (res_marker) {
-			  res_marker.setPosition({lat:res.latitude,lng:res.longitude});
-		  } else {
-			  res_marker = new google.maps.Marker({
-				  map: map,
-				  position: {lat:res.latitude,lng:res.longitude},
-				  icon: resMarkerIcon
-			  });
-		  }
+    $.ajax({
+        url: 'api/central',
+  	dataType : 'json',
+        contentType: "application/json;charset=utf-8",
+  	type: 'POST',
+        data: JSON.stringify(json),
+	success: function(res){
+            if (res_marker) {
+                res_marker.setPosition({lat:res.latitude,lng:res.longitude});
+            } else {
+                res_marker = new google.maps.Marker({
+                    map: map,
+                    position: {lat:res.latitude,lng:res.longitude},
+                    icon: resMarkerIcon
+                });
+            }
 		  
-		  $('.grey-bkg').addClass('result-displayed');
-	  }
-	});
+            $('.grey-bkg').addClass('result-displayed');
+        }
+    });
 });
