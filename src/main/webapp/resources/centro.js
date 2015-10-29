@@ -79,18 +79,19 @@ $('#address-form').on('submit', function(e){
 var $submit = $('#submit');
 
 $submit.on('click', function() {
-	var json = [];
+        var json = [];
 	$('.address').each(function() {
 		var $this = $(this);
-		json.push({'latitude':$this.data('lat'), 'longitude': $this.data('lng')});
+		json.push({"latitude":$this.data('lat'), "longitude": $this.data('lng')});
 	});
 	
 	$.ajax({
   	  url: 'api/central',
   	  dataType : 'json',
+          contentType: "application/json;charset=utf-8",
   	  type: 'POST',
+          data: JSON.stringify(json),
 	  success: function(obj){
-		 // PROCESS RESULT HERE
 		  alert();
 		  console.log(obj);
 	  }
