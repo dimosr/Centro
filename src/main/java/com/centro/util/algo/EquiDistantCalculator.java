@@ -6,8 +6,8 @@ import com.centro.util.GeoCoordinate;
 import java.util.List;
 import org.springframework.stereotype.Component;
 
-@Component("middlePointCalculator")
-public class MiddlePointCalculator implements CentralPointCalculator {
+@Component("equiDistantCalculator")
+public class EquiDistantCalculator implements MeetingPointCalculator {
 
 	public GeoCoordinate getMidPoint(List<GeoCoordinate> locations){
             GeoCoordinate midPoint = null ;
@@ -28,7 +28,7 @@ public class MiddlePointCalculator implements CentralPointCalculator {
             return midPoint;		
 	}
         
-        public GeoCoordinate getCentralPoint(List<GeoCoordinate> locations) {
+        public GeoCoordinate getMeetingPoint(List<GeoCoordinate> locations) {
             return getMidPoint(locations);
         }
 

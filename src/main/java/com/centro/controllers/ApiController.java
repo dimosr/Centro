@@ -1,7 +1,7 @@
 package com.centro.controllers;
 
 import com.centro.util.GeoCoordinate;
-import com.centro.util.algo.CentralPointCalculator;
+import com.centro.util.algo.MeetingPointCalculator;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -21,8 +21,8 @@ public class ApiController {
     private static final String apiVersion = "1.0";
     
     @Autowired
-    @Qualifier("middlePointCalculator")
-    private CentralPointCalculator calculator;
+    @Qualifier("equiDistantCalculator")
+    private MeetingPointCalculator calculator;
     
     @RequestMapping(value = "/api", method = RequestMethod.GET, produces="application/json")
     public @ResponseBody String index() {
@@ -35,7 +35,7 @@ public class ApiController {
         
         List<GeoCoordinate> locations = jsonMapper.readValue(input, new TypeReference<List<GeoCoordinate>>(){});
         
-        GeoCoordinate centralPoint = calculator.getCentralPoint(locations);
+        GeoCoordinate centralPoint = calculator.getMeetingPoint(locations);
         String output = jsonMapper.writeValueAsString(centralPoint);
         return output;
     }

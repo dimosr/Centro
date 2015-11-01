@@ -6,14 +6,14 @@ import java.util.List;
 import static org.junit.Assert.assertEquals;
 import org.junit.BeforeClass;
 
-public class MiddlePointCalculatorTest {
+public class EquiDistantCalculatorTest {
     
     private static final double DELTA = 1e-15;
-    private static MiddlePointCalculator calculator;
+    private static EquiDistantCalculator calculator;
     
     @BeforeClass
     public static void setUpDependencies() {
-        calculator = new MiddlePointCalculator();
+        calculator = new EquiDistantCalculator();
     }
     
     public void getMidPoint() {
