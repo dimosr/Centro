@@ -1,13 +1,11 @@
-package com.centro.controller;
+package com.centro.controllers;
 
 import com.centro.util.GeoCoordinate;
 import com.centro.util.algo.CentralPointCalculator;
-import com.centro.util.algo.MiddlePointCalculator;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -41,4 +39,5 @@ public class ApiController {
         String output = jsonMapper.writeValueAsString(centralPoint);
         return output;
     }
+    
 }
