@@ -4,9 +4,11 @@ import com.centro.util.CartesianCoordinate;
 import com.centro.util.CoordinatesConverter;
 import com.centro.util.GeoCoordinate;
 import java.util.List;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
-@Component("equiDistantCalculator")
+@Component
+@Qualifier("equiDistantCalculator")
 public class EquiDistantCalculator implements MeetingPointCalculator {
 
 	public GeoCoordinate getMidPoint(List<GeoCoordinate> locations){

@@ -18,10 +18,10 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @Controller
 public class ApiController {
     
-    private static final String apiVersion = "1.0";
+    private static final String apiVersion = "1.1";
     
     @Autowired
-    @Qualifier("equiDistantCalculator")
+    @Qualifier("equiTimeCalculator")
     private MeetingPointCalculator calculator;
     
     @RequestMapping(value = "/api", method = RequestMethod.GET, produces="application/json")
