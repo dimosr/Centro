@@ -5,6 +5,7 @@ import com.centro.util.TransportationMode;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
+import java.util.List;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -53,8 +54,8 @@ public class HttpService {
     }
     
     public long DistanceInSecondsByMode(GeoCoordinate from, GeoCoordinate to, TransportationMode mode) throws IOException {
-        String origin = getAddressName(from);
-        String destination = getAddressName(to);
+        String origin = from.getLatitude() + "," + from.getLongitude();
+        String destination = to.getLatitude() + "," + to.getLongitude();
         
         String response = restRequest.getForObject(DISTANCE_API, String.class, origin, destination, mode.getMapsFormat());
         
@@ -66,7 +67,17 @@ public class HttpService {
         return seconds;
     }
     
+    public long DistanceInSecondsByMode(String from, String to, TransportationMode mode) throws IOException {
+        GeoCoordinate source = getPlaceGeocode(from);
+        GeoCoordinate destination = getPlaceGeocode(to);
+        return DistanceInSecondsByMode(source, destination, mode);
+    }
+    
     public long DistanceInSeconds(GeoCoordinate from, GeoCoordinate to) throws IOException {
+        return DistanceInSecondsByMode(from, to, DEFAULT_MODE);
+    }
+    
+    public long DistanceInSeconds(String from, String to) throws IOException {
         return DistanceInSecondsByMode(from, to, DEFAULT_MODE);
     }
 }
