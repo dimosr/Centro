@@ -5,6 +5,7 @@ import com.centro.util.TransportationMode;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -79,5 +80,34 @@ public class HttpService {
     
     public long DistanceInSeconds(String from, String to) throws IOException {
         return DistanceInSecondsByMode(from, to, DEFAULT_MODE);
+    }
+    
+    public List<Long> DistanceInSecondsByMode(GeoCoordinate from, List<GeoCoordinate> to, TransportationMode mode) throws IOException {
+        String origin = from.getLatitude() + "," + from.getLongitude();
+        String destinations = "";
+        for(int i = 0; i < to.size(); i++) {
+            GeoCoordinate destination = to.get(i);
+            destinations += destination.getLatitude() + "," + destination.getLongitude();
+            if(i < (to.size()-1))    destinations += "|";
+        }
+        
+        String response = restRequest.getForObject(DISTANCE_API, String.class, origin, destinations, mode.getMapsFormat());
+        
+        List<Long> seconds = new ArrayList<Long>();
+        
+        ObjectMapper jsonMapper = new ObjectMapper();
+        JsonNode distance = jsonMapper.readTree(response);
+        List<JsonNode> paths = distance.get("rows").findValue("elements").findValues("duration");
+        for(JsonNode path : paths) {
+            long currentDist = path.findValue("value").asLong();
+            seconds.add(new Long(currentDist));
+        }
+        
+        return seconds;
+    }
+    
+    public List<Long> DistanceInSeconds(GeoCoordinate from, List<GeoCoordinate> to) throws IOException {
+        return DistanceInSecondsByMode(from, to, TransportationMode.CAR);
+        
     }
 }
