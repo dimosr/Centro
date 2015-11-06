@@ -1,9 +1,12 @@
 package com.centro.controllers;
 
+import com.centro.services.HttpService;
 import com.centro.util.GeoCoordinate;
+import com.centro.util.Place;
 import com.centro.util.algo.MeetingPointCalculator;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import java.util.List;
@@ -19,6 +22,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 public class ApiController {
     
     private static final String apiVersion = "1.1";
+    
+    @Autowired
+    HttpService httpService;
     
     @Autowired
     @Qualifier("equiDistantCalculator")
@@ -40,4 +46,23 @@ public class ApiController {
         return output;
     }
     
+    @RequestMapping(value = "/api/places", method = RequestMethod.POST, produces="application/json", consumes="application/json") 
+    public @ResponseBody String places(@RequestBody String input) throws JsonProcessingException, IOException {
+        ObjectMapper jsonMapper = new ObjectMapper();
+        
+        JsonNode requestTree = jsonMapper.readTree(input);
+        double latitude = requestTree.findValue("latitude").asDouble();
+        double longitude = requestTree.findValue("longitude").asDouble();
+        double radius = requestTree.findValue("radius").asDouble();
+        String type;
+        if(requestTree.findValue("type") != null) {
+            type = requestTree.findValue("type").asText();
+        }
+        else
+            type = "";
+        
+        List<Place> places = httpService.getPlacesInsideRadius(new GeoCoordinate(latitude, longitude), radius, type);
+        String output = jsonMapper.writeValueAsString(places);
+        return output;
+    }
 }

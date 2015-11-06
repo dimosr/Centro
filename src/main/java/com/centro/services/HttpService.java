@@ -1,12 +1,16 @@
 package com.centro.services;
 
 import com.centro.util.GeoCoordinate;
+import com.centro.util.Place;
 import com.centro.util.TransportationMode;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -18,6 +22,11 @@ public class HttpService {
     private static final String GEOCODE_API = "https://maps.googleapis.com/maps/api/geocode/json?address={address}";
     private static final String REVERSE_GEOCODE_API = "https://maps.googleapis.com/maps/api/geocode/json?latlng={latitude},{longitude}";
     private static final String DISTANCE_API = "https://maps.googleapis.com/maps/api/distancematrix/json?origins={origins}&destinations={destinations}&mode={mode}";
+    private static final String PLACES_API = "https://maps.googleapis.com/maps/api/place/nearbysearch/json?location={location}&radius={radius}&types={types}&key={key}&name={name}";
+    
+    @Value("${google.place.api.key}")
+    private String googleApiKey;
+    
     
     private static final TransportationMode DEFAULT_MODE = TransportationMode.CAR;
     
@@ -80,5 +89,28 @@ public class HttpService {
     
     public List<Long> DistanceInSeconds(GeoCoordinate from, List<GeoCoordinate> to) throws IOException {
         return DistanceInSecondsByMode(from, to, TransportationMode.CAR);
+    }
+    
+    public List<Place> getPlacesInsideRadius(GeoCoordinate center, double radius, String type) throws IOException {
+        List<Place> places = new ArrayList<Place>();
+        
+        String locationString = center.getLatitude() + "," + center.getLongitude();
+        String response = restRequest.getForObject(PLACES_API, String.class, locationString, radius, type, googleApiKey, "");
+        
+        ObjectMapper jsonMapper = new ObjectMapper();
+        JsonNode responseTree = jsonMapper.readTree(response);
+        Iterator<JsonNode> placesNodes = responseTree.get("results").elements();
+        
+        while(placesNodes.hasNext()) {
+            JsonNode place = placesNodes.next();
+            double latitude = place.findValue("geometry").findValue("lat").asDouble();
+            double longitude = place.findValue("geometry").findValue("lng").asDouble();
+            GeoCoordinate location = new GeoCoordinate(latitude, longitude);
+            String name = place.findValue("name").asText();
+            
+            places.add(new Place(location, name));
+        }
+        
+        return places;
     }
 }
