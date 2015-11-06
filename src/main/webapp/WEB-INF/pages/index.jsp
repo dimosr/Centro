@@ -1,5 +1,7 @@
 <!DOCTYPE html>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ page import="com.centro.util.PlaceType" %>
+<%  pageContext.setAttribute("placeTypes", PlaceType.values()); %> 
 <html>
 <head>
 	<meta charset="utf-8">
@@ -37,6 +39,11 @@
 				<div id="home-addon"><span class="glyphicon glyphicon-home" aria-hidden="true"></span></div>
 				<input type="text" class="form-control" placeholder="My address" id="address-input"><!--
 			 --><button class="btn btn-success" type="submit" id="add-button"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></button>
+                            <select style="display:none">
+                                <c:forEach var="placeType" items="${placeTypes}">
+                                    <option value="${placeType.getGoogleApiName()}">${placeType.getFrontEndName()}</option>
+                                </c:forEach>
+                            </select>
 			</div>
 		</form>
 		
