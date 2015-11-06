@@ -110,6 +110,7 @@ public class HttpService {
             
             places.add(new Place(location, name));
         }
+        places = (places.size() > 10) ? places.subList(0, 11) : places.subList(0, places.size());
         
         return places;
     }
