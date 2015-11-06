@@ -21,7 +21,7 @@ public class ApiController {
     private static final String apiVersion = "1.1";
     
     @Autowired
-    @Qualifier("equiTimeCalculator")
+    @Qualifier("equiDistantCalculator")
     private MeetingPointCalculator calculator;
     
     @RequestMapping(value = "/api", method = RequestMethod.GET, produces="application/json")
