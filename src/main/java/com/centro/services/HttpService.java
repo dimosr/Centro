@@ -54,34 +54,6 @@ public class HttpService {
         return address;
     }
     
-    public long DistanceInSecondsByMode(GeoCoordinate from, GeoCoordinate to, TransportationMode mode) throws IOException {
-        String origin = from.getLatitude() + "," + from.getLongitude();
-        String destination = to.getLatitude() + "," + to.getLongitude();
-        
-        String response = restRequest.getForObject(DISTANCE_API, String.class, origin, destination, mode.getMapsFormat());
-        
-        ObjectMapper jsonMapper = new ObjectMapper();
-        JsonNode distance = jsonMapper.readTree(response);
-        distance = distance.get("rows").findValue("elements").findValue("duration");
-        long seconds = distance.findValue("value").asLong();
-        
-        return seconds;
-    }
-    
-    public long DistanceInSecondsByMode(String from, String to, TransportationMode mode) throws IOException {
-        GeoCoordinate source = getPlaceGeocode(from);
-        GeoCoordinate destination = getPlaceGeocode(to);
-        return DistanceInSecondsByMode(source, destination, mode);
-    }
-    
-    public long DistanceInSeconds(GeoCoordinate from, GeoCoordinate to) throws IOException {
-        return DistanceInSecondsByMode(from, to, DEFAULT_MODE);
-    }
-    
-    public long DistanceInSeconds(String from, String to) throws IOException {
-        return DistanceInSecondsByMode(from, to, DEFAULT_MODE);
-    }
-    
     public List<Long> DistanceInSecondsByMode(GeoCoordinate from, List<GeoCoordinate> to, TransportationMode mode) throws IOException {
         String origin = from.getLatitude() + "," + from.getLongitude();
         String destinations = "";
@@ -108,6 +80,5 @@ public class HttpService {
     
     public List<Long> DistanceInSeconds(GeoCoordinate from, List<GeoCoordinate> to) throws IOException {
         return DistanceInSecondsByMode(from, to, TransportationMode.CAR);
-        
     }
 }
