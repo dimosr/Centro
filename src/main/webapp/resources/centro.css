@@ -23,6 +23,12 @@ body {
     font-family: 'Fira Sans', sans-serif;
 }
 
+p {
+	font-size: 1.3em;
+	color: #7FDBDC;
+	text-align: center;
+}
+
 #map {
     position: absolute;
     top: 0;
@@ -83,8 +89,6 @@ body {
 .logo-container p {
 	margin-top: 25px;
 	margin-bottom: 25px;
-	font-size: 1.3em;
-	color: #7FDBDC;
 }
 
 #address-form .form-group {

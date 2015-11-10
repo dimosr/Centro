@@ -39,11 +39,16 @@
 				<div id="home-addon"><span class="glyphicon glyphicon-home" aria-hidden="true"></span></div>
 				<input type="text" class="form-control" placeholder="My address" id="address-input"><!--
 			 --><button class="btn btn-success" type="submit" id="add-button"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></button>
-                            <select style="display:none">
-                                <c:forEach var="placeType" items="${placeTypes}">
-                                    <option value="${placeType.getGoogleApiName()}">${placeType.getFrontEndName()}</option>
-                                </c:forEach>
-                            </select>
+			 </div>
+			 <div class="form-group">
+			 	<p>You can also specify what you're looking for:</p>
+                <select class="form-control" id="placeType">
+                	<option value="">Nothing specific</option>
+                	<option value="any">Any point of interest</option>
+                    <c:forEach var="placeType" items="${placeTypes}">
+                        <option value="<c:out value="${placeType.getGoogleApiName()}"/>"><c:out value="${placeType.getFrontEndName()}"/></option>
+                    </c:forEach>
+                </select>
 			</div>
 		</form>
 		
@@ -58,6 +63,7 @@
 	<script src="<c:url value='/resources/centro.js'/>"></script>
 	<script>
 		var resMarkerIcon = "<c:url value='/img/marker.png'/>"
+		var placeMarkerIcon = "<c:url value='/img/placeMarker.png'/>"
 	</script>
 </body>
 </html>

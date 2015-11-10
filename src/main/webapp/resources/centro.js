@@ -76,7 +76,8 @@ $('#address-form').on('submit', function(e){
 
 /* Send Form */
 
-var res_marker = false,
+var resMarker = false,
+	placeMarkers = []
 	$submit = $('#submit');
 
 $submit.on('click', function() {
@@ -88,23 +89,92 @@ $submit.on('click', function() {
     });
 	
     $.ajax({
-        url: 'api/central',
-  	dataType : 'json',
-        contentType: "application/json;charset=utf-8",
-  	type: 'POST',
-        data: JSON.stringify(json),
-	success: function(res){
-            if (res_marker) {
-                res_marker.setPosition({lat:res.latitude,lng:res.longitude});
+	    url: 'api/central',
+	  	dataType : 'json',
+	    contentType: "application/json;charset=utf-8",
+	  	type: 'POST',
+	    data: JSON.stringify(json),
+		success: function(res){
+			// Central point
+            if (resMarker) {
+                resMarker.setPosition({lat:res.latitude,lng:res.longitude});
             } else {
-                res_marker = new google.maps.Marker({
-                    map: map,
-                    position: {lat:res.latitude,lng:res.longitude},
-                    icon: resMarkerIcon
-                });
+                resMarker = createMarker({lat:res.latitude,lng:res.longitude}, resMarkerIcon, "Central Point");
             }
 		  
             $('.grey-bkg').addClass('result-displayed');
-        }
+            
+            // POI
+			res.radius = 2000;
+
+			var pType = $('#placeType').val();
+			
+			if (pType == "") {
+				return true;
+			}
+			
+			if (pType != "Any") {
+				res.type = pType;
+			}
+			
+			$.ajax({
+			    url: 'api/places',
+			  	dataType : 'json',
+			    contentType: "application/json;charset=utf-8",
+			  	type: 'POST',
+			    data: JSON.stringify(res),
+				success: function(places){		
+					placeMarkers.forEach(function(p){
+						 p.setMap(null);
+					});
+					placeMarkers = [];
+		            places.forEach(function(place){
+		            	var m = createMarker({lat:place.location.latitude,lng:place.location.longitude}, placeMarkerIcon, place.name);
+		            	placeMarkers.push(m);
+		            });
+		        }
+			 });
+		}
     });
 });
+
+// Util --------------
+var currentInfoWindow = null;
+
+function createMarker(latLng, icon, infoText) {
+	var marker = new google.maps.Marker({
+		icon: icon,
+		position: latLng,
+		map: map
+	});
+	
+	var infowindow = new google.maps.InfoWindow({
+		content: infoText 
+	});
+
+	google.maps.event.addListener(marker, 'mouseover', function() {
+		infowindow.open(map,marker);
+	});
+
+	google.maps.event.addListener(marker, 'mouseout', function () {
+		if (currentInfoWindow != infowindow) { 
+			infowindow.close();
+		} 
+	});
+
+	google.maps.event.addListener(marker, 'click', function() {
+		var needOpen = true;
+		
+		if (currentInfoWindow != null) {
+			needOpen = currentInfoWindow.content != infowindow.content;
+			currentInfoWindow.close();
+			currentInfoWindow = null;
+		}
+		if (needOpen) {
+			infowindow.open(map, marker); 
+			currentInfoWindow = infowindow;
+		}
+	});
+	
+	return marker;
+}

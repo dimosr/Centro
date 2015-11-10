@@ -14,7 +14,7 @@
         <context:property-placeholder location="classpath:app.properties" />
         <mvc:annotation-driven />
         <mvc:resources mapping="/resources/**" location="/resources/" />
-        <mvc:resources mapping="/img/*" location="/img/" />
+        <mvc:resources mapping="/img/**" location="/img/" />
        
 	<bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
 		<property name="prefix">
