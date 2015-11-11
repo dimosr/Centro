@@ -105,7 +105,7 @@ $submit.on('click', function() {
             $('.grey-bkg').addClass('result-displayed');
             
             // POI
-			res.radius = 2000;
+			res.radius = 10000;
 
 			var pType = $('#placeType').val();
 			

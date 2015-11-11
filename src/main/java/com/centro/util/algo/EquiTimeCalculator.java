@@ -35,7 +35,7 @@ public class EquiTimeCalculator implements MeetingPointCalculator {
         }
         double initialCircleSize = (costInDistance/locations.size())*INITIAL_CIRCLE_SIZE_PERCENTAGE;
         
-        List<Long> timeDistances = httpService.DistanceInSeconds(circleCenter, locations);
+        List<Long> timeDistances = httpService.distanceInSeconds(circleCenter, locations);
         double costInTime = 0;
         for(Long timeDistance : timeDistances) {
             costInTime += timeDistance;
@@ -50,7 +50,7 @@ public class EquiTimeCalculator implements MeetingPointCalculator {
             double minimumTimeSum = previousTimeSum;
             GeoCoordinate bestCandidate = null;
             for(GeoCoordinate candidate : candidates) {
-                List<Long> times = httpService.DistanceInSeconds(candidate, locations);
+                List<Long> times = httpService.distanceInSeconds(candidate, locations);
                 int timeSum = 0;
                 for(Long time : times) {
                     timeSum += time;

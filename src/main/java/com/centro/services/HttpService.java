@@ -3,14 +3,16 @@ package com.centro.services;
 import com.centro.util.GeoCoordinate;
 import com.centro.util.Place;
 import com.centro.util.TransportationMode;
+import com.centro.util.Tuple;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.PropertySource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -63,7 +65,7 @@ public class HttpService {
         return address;
     }
     
-    public List<Long> DistanceInSecondsByMode(GeoCoordinate from, List<GeoCoordinate> to, TransportationMode mode) throws IOException {
+    public List<Long> distanceInSecondsByMode(GeoCoordinate from, List<GeoCoordinate> to, TransportationMode mode) throws IOException {
         String origin = from.getLatitude() + "," + from.getLongitude();
         String destinations = "";
         for(int i = 0; i < to.size(); i++) {
@@ -87,12 +89,11 @@ public class HttpService {
         return seconds;
     }
     
-    public List<Long> DistanceInSeconds(GeoCoordinate from, List<GeoCoordinate> to) throws IOException {
-        return DistanceInSecondsByMode(from, to, TransportationMode.CAR);
+    public List<Long> distanceInSeconds(GeoCoordinate from, List<GeoCoordinate> to) throws IOException {
+        return distanceInSecondsByMode(from, to, TransportationMode.CAR);
     }
     
     public List<Place> getPlacesInsideRadius(GeoCoordinate center, double radius, String type) throws IOException {
-        List<Place> places = new ArrayList<Place>();
         
         String locationString = center.getLatitude() + "," + center.getLongitude();
         String response = restRequest.getForObject(PLACES_API, String.class, locationString, radius, type, googleApiKey, "");
@@ -101,6 +102,9 @@ public class HttpService {
         JsonNode responseTree = jsonMapper.readTree(response);
         Iterator<JsonNode> placesNodes = responseTree.get("results").elements();
         
+       
+        List<GeoCoordinate> placesCoordinates = new ArrayList();
+        List<Place> places = new ArrayList();
         while(placesNodes.hasNext()) {
             JsonNode place = placesNodes.next();
             double latitude = place.findValue("geometry").findValue("lat").asDouble();
@@ -108,9 +112,28 @@ public class HttpService {
             GeoCoordinate location = new GeoCoordinate(latitude, longitude);
             String name = place.findValue("name").asText();
             
+            placesCoordinates.add(new GeoCoordinate(latitude, longitude));
             places.add(new Place(location, name));
         }
-        places = (places.size() > 10) ? places.subList(0, 11) : places.subList(0, places.size());
+        
+        /* Sorting By Time */
+        List<Long> distancesInSeconds = distanceInSeconds(center, placesCoordinates);
+        List<Tuple<Place, Long>> placesWithTime = new ArrayList();
+        for(int i = 0; i < places.size(); i++) {
+            placesWithTime.add(new Tuple(places.get(i), distancesInSeconds.get(i)));
+        }
+        Collections.sort(placesWithTime, new Comparator<Tuple<Place, Long>>() {
+            public int compare(Tuple<Place, Long> obj1, Tuple<Place, Long> obj2) {
+                return obj2.second.compareTo(obj1.second);
+            }
+        });
+        
+        /* Keeping Top10 */
+        int topLimit = (places.size() > 10) ? 10 : places.size();
+        places.clear();
+        for(int i = 0; i < topLimit; i++) {
+            places.add(placesWithTime.get(i).first);
+        }
         
         return places;
     }
