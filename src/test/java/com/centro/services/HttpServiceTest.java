@@ -1,8 +1,14 @@
 package com.centro.services;
 
+import static com.centro.services.HttpService.DISTANCE_API;
+import static com.centro.services.HttpService.REVERSE_GEOCODE_API;
 import com.centro.util.CoordinatesConverter;
 import com.centro.util.GeoCoordinate;
+import com.centro.util.TransportationMode;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import static org.junit.Assert.assertEquals;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -32,5 +38,36 @@ public class HttpServiceTest {
         GeoCoordinate expectedCoordinate = new GeoCoordinate(51.5177367, -0.1731784);
         assertEquals(expectedCoordinate.getLatitude(), actualCoordinate.getLatitude(), DELTA);
         assertEquals(expectedCoordinate.getLongitude(), actualCoordinate.getLongitude(), DELTA);
+    }
+    
+    @Test
+    public void getAddressNameTest() throws IOException {
+        String googleGeocodeResponse = "{\"results\" : [{\"formatted_address\" : \"S Wharf Rd, London W2 1PG, UK\", \"place_id\" : \"ChIJdd4hrwug2EcRmSrV3Vo6llI\"}],\"status\" : \"OK\"}";
+        GeoCoordinate searchCoordinate = new GeoCoordinate(51.5177367, 51.5177367);
+        when(restRequest.getForObject(service.REVERSE_GEOCODE_API, String.class, searchCoordinate.getLatitude(), searchCoordinate.getLongitude())).thenReturn(googleGeocodeResponse);
+        
+        String actualAddressName = service.getAddressName(searchCoordinate);
+        String expectedAddressName = "S Wharf Rd, London W2 1PG, UK";
+        assertEquals(expectedAddressName, actualAddressName);
+    }
+    
+    @Test
+    public void distanceInSecondsTest() throws IOException {
+        String googleGeocodeResponse = "{\"rows\" : [{\"elements\" : [\n" +
+                                        "            {\"distance\" : {\"text\" : \"90.2 km\",\"value\" : 90224},\"duration\" : {\"text\" : \"1 hour 14 mins\",\"value\" : 4416},\"status\" : \"OK\"},\n" +
+                                        "            {\"distance\" : {\"text\" : \"3.4 km\",\"value\" : 3436},\"duration\" : {\"text\" : \"12 mins\",\"value\" : 747},\"status\" : \"OK\"}]\n" +
+                                        "      }],\"status\" : \"OK\"}";
+        GeoCoordinate origin = new GeoCoordinate(51.5177367, -0.1731783999999834);
+        List<GeoCoordinate> destinations = new ArrayList();
+        destinations.add(new GeoCoordinate(51.75663409999999, -1.2547036999999364));
+        destinations.add(new GeoCoordinate(51.5229378, -0.13082059999999274));
+        String originParam = String.valueOf(origin.getLatitude()) + "," + String.valueOf(origin.getLongitude());
+        String destinationsParam = String.valueOf(destinations.get(0).getLatitude()) + "," +  String.valueOf(destinations.get(0).getLongitude()) + "|" + String.valueOf(destinations.get(1).getLatitude()) + "," +  String.valueOf(destinations.get(1).getLongitude());
+        when(restRequest.getForObject(service.DISTANCE_API, String.class, originParam, destinationsParam, TransportationMode.CAR.getMapsFormat())).thenReturn(googleGeocodeResponse);
+        
+        List<Long> expectedDistances = Arrays.asList(new Long(4416), new Long(747));
+        List<Long> actualDistances = service.distanceInSeconds(origin, destinations);
+        assertEquals(expectedDistances.get(0), actualDistances.get(0), DELTA);
+        assertEquals(expectedDistances.get(1), actualDistances.get(1), DELTA);
     }
 }
