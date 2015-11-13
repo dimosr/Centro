@@ -1,10 +1,5 @@
 package com.centro.services;
 
-import static com.centro.services.HttpService.DISTANCE_API;
-import static com.centro.services.HttpService.PLACES_DETAILS_API;
-import static com.centro.services.HttpService.PLACES_PHOTOS_API;
-import static com.centro.services.HttpService.REVERSE_GEOCODE_API;
-import com.centro.util.CoordinatesConverter;
 import com.centro.util.GeoCoordinate;
 import com.centro.util.Place;
 import com.centro.util.PlaceInfo;
