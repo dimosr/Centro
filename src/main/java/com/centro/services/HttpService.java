@@ -2,11 +2,13 @@ package com.centro.services;
 
 import com.centro.util.GeoCoordinate;
 import com.centro.util.Place;
+import com.centro.util.PlaceInfo;
 import com.centro.util.TransportationMode;
 import com.centro.util.Tuple;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -21,10 +23,14 @@ import org.springframework.web.client.RestTemplate;
 @Service
 public class HttpService {
     
-    private static final String GEOCODE_API = "https://maps.googleapis.com/maps/api/geocode/json?address={address}";
-    private static final String REVERSE_GEOCODE_API = "https://maps.googleapis.com/maps/api/geocode/json?latlng={latitude},{longitude}";
-    private static final String DISTANCE_API = "https://maps.googleapis.com/maps/api/distancematrix/json?origins={origins}&destinations={destinations}&mode={mode}";
-    private static final String PLACES_API = "https://maps.googleapis.com/maps/api/place/nearbysearch/json?location={location}&radius={radius}&types={types}&key={key}&name={name}";
+    public static final String GEOCODE_API = "https://maps.googleapis.com/maps/api/geocode/json?address={address}";
+    public static final String REVERSE_GEOCODE_API = "https://maps.googleapis.com/maps/api/geocode/json?latlng={latitude},{longitude}";
+    public static final String DISTANCE_API = "https://maps.googleapis.com/maps/api/distancematrix/json?origins={origins}&destinations={destinations}&mode={mode}";
+    public static final String PLACES_API = "https://maps.googleapis.com/maps/api/place/nearbysearch/json?location={location}&radius={radius}&types={types}&key={key}&name={name}";
+    public static final String PLACES_DETAILS_API = "https://maps.googleapis.com/maps/api/place/details/json?placeid={placeID}&key={key}";
+    public static final String PLACES_PHOTOS_API = "https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference={0}&key={1}";
+    
+    private static final int PLACES_IMAGES_LIMIT = 4;
     
     @Value("${google.place.api.key}")
     private String googleApiKey;
@@ -41,6 +47,11 @@ public class HttpService {
         headers = new HttpHeaders();
         headers.add("Content-Type", "application/json");
         headers.add("Accept", "*/*");
+    }
+    
+    public HttpService(RestTemplate restRequest) {
+        this();
+        this.restRequest = restRequest;
     }
     
     public GeoCoordinate getPlaceGeocode(String address) throws IOException {
@@ -106,14 +117,17 @@ public class HttpService {
         List<GeoCoordinate> placesCoordinates = new ArrayList();
         List<Place> places = new ArrayList();
         while(placesNodes.hasNext()) {
-            JsonNode place = placesNodes.next();
-            double latitude = place.findValue("geometry").findValue("lat").asDouble();
-            double longitude = place.findValue("geometry").findValue("lng").asDouble();
+            JsonNode placeNode = placesNodes.next();
+            String id = placeNode.findValue("place_id").asText();
+            double latitude = placeNode.findValue("geometry").findValue("lat").asDouble();
+            double longitude = placeNode.findValue("geometry").findValue("lng").asDouble();
             GeoCoordinate location = new GeoCoordinate(latitude, longitude);
-            String name = place.findValue("name").asText();
+            String name = placeNode.findValue("name").asText();
             
             placesCoordinates.add(new GeoCoordinate(latitude, longitude));
-            places.add(new Place(location, name));
+            Place place = new Place(id, location, name);
+            places.add(place);
+            place.setInfo(getPlaceInfo(place));
         }
         
         /* Sorting By Time */
@@ -136,5 +150,32 @@ public class HttpService {
         }
         
         return places;
+    }
+    
+    
+    public PlaceInfo getPlaceInfo(Place place) throws IOException {
+        String response = restRequest.getForObject(PLACES_DETAILS_API, String.class, place.getGoogleID(), googleApiKey, "");
+        
+        ObjectMapper jsonMapper = new ObjectMapper();
+        JsonNode responseTree = jsonMapper.readTree(response).findValue("result");
+        
+        String websiteLink = responseTree.has("website") ? responseTree.findValue("website").asText() : "-";
+        
+        Iterator<JsonNode> photosNodes = responseTree.has("photos") ? responseTree.get("photos").elements() : null;
+        int retrievedImages = 0;
+        List<String> imageLinks = new ArrayList();
+        if(photosNodes != null) {
+            while(photosNodes.hasNext() && (retrievedImages < PLACES_IMAGES_LIMIT)  ) {
+                JsonNode photo = photosNodes.next();
+                String referenceID = photo.findValue("photo_reference").asText();
+                String imageLink = MessageFormat.format(PLACES_PHOTOS_API, referenceID, googleApiKey);
+                imageLinks.add(imageLink);
+            }
+        }   
+        
+        String averageRating = responseTree.has("rating") ? responseTree.findValue("rating").asText() : "-";
+        PlaceInfo placeInfo = new PlaceInfo(imageLinks, averageRating, websiteLink);
+        
+        return placeInfo;
     }
 }
