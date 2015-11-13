@@ -96,28 +96,37 @@ $submit.on('click', function() {
 	    data: JSON.stringify(json),
 		success: function(res){
 			// Central point
-            if (resMarker) {
+            /*if (resMarker) {
                 resMarker.setPosition({lat:res.latitude,lng:res.longitude});
-            } else {
+            } else {*/
                 resMarker = createMarker({lat:res.latitude,lng:res.longitude}, resMarkerIcon, "Central Point");
                 resMarker.setDraggable(true);
-                google.maps.event.addListener(resMarker, 'dragend', function() {addPOI(res);});
-            }
+                google.maps.event.addListener(resMarker, 'dragend', function() {addPOI($('#ResPlaceType').val());});
+            //}
             
             $('.res-detail').html('Lat: ' + res.latitude + ', Lng: ' + res.longitude);
                      
-            $('.grey-bkg').animate({opacity: 0}, 'fast');
+            $('.grey-bkg').animate({opacity: 0}, 'fast', function() {
+            	$('.grey-bkg').hide();
+            });
             $('#map').animate({left: '400px'}, 'slow');
             $('#res-panel').animate({left: '0px'}, 'slow');
             map.fitBounds(bounds);
             
-            addPOI(res, $('#placeType').val());
+            addPOI($('#placeType').val());
 		}
     });
 });
 
-function addPOI(res, pType) {
-	res.radius = 10000;
+function addPOI(pType) {
+	var gPos = resMarker.getPosition(),
+		res = {};
+	
+	res.latitude = gPos.lat();
+	res.longitude = gPos.lng();
+	
+	
+	res.radius = 5000;
 	
 	if (pType == "") {
 		return true;
@@ -147,8 +156,9 @@ function addPOI(res, pType) {
 }
 
 $('#ResPlaceType').on('change', function(){
-	var gPos = resMarker.getPosition();
-	addPOI("{latitude: " + gPos.lat + ",longitude: " + gPos.lng +"}", $('#placeType').val());
+	var pType =  $('#ResPlaceType').val();
+	
+	addPOI(pType);
 });
 
 // Util --------------
