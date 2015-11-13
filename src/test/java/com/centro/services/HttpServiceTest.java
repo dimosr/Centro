@@ -1,11 +1,16 @@
 package com.centro.services;
 
 import static com.centro.services.HttpService.DISTANCE_API;
+import static com.centro.services.HttpService.PLACES_DETAILS_API;
+import static com.centro.services.HttpService.PLACES_PHOTOS_API;
 import static com.centro.services.HttpService.REVERSE_GEOCODE_API;
 import com.centro.util.CoordinatesConverter;
 import com.centro.util.GeoCoordinate;
+import com.centro.util.Place;
+import com.centro.util.PlaceInfo;
 import com.centro.util.TransportationMode;
 import java.io.IOException;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -69,5 +74,26 @@ public class HttpServiceTest {
         List<Long> actualDistances = service.distanceInSeconds(origin, destinations);
         assertEquals(expectedDistances.get(0), actualDistances.get(0), DELTA);
         assertEquals(expectedDistances.get(1), actualDistances.get(1), DELTA);
+    }
+    
+    @Test
+    public void getPlaceInfo() throws IOException {
+        String googleGeocodeResponse = "{\"result\" : {\"website\" : \"http://www.test.com\",\n" +
+                                        "              \"photos\" : [{\"height\" : 1280,\"photo_reference\" : \"photo_reference1\"},\n" +
+                                        "                           {\"height\" : 1280,\"photo_reference\" : \"photo_reference2\"}]}}";
+        List<String> imageLinks = Arrays.asList(MessageFormat.format(service.PLACES_PHOTOS_API, "photo_reference1", service.googleApiKey), MessageFormat.format(service.PLACES_PHOTOS_API, "photo_reference2", service.googleApiKey));
+        when(restRequest.getForObject(service.PLACES_DETAILS_API, String.class, "testGoogleID1234", service.googleApiKey, "")).thenReturn(googleGeocodeResponse);
+        
+        
+        Place place = new Place("testGoogleID1234", new GeoCoordinate(1234, -0.1234), "testPlaceName");
+        PlaceInfo actualInfo = service.getPlaceInfo(place);
+        PlaceInfo expectedInfo = new PlaceInfo(imageLinks, "-", "http://www.test.com");
+        assertEquals(expectedInfo.averageRating, actualInfo.averageRating);
+        assertEquals(expectedInfo.imageLinks.size(), actualInfo.imageLinks.size());
+        assertEquals(expectedInfo.imageLinks.get(0), actualInfo.imageLinks.get(0));
+        assertEquals(expectedInfo.imageLinks.get(1), actualInfo.imageLinks.get(1));
+        assertEquals(expectedInfo.websiteLink, actualInfo.websiteLink);
+        
+        
     }
 }

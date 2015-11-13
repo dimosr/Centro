@@ -33,7 +33,7 @@ public class HttpService {
     private static final int PLACES_IMAGES_LIMIT = 4;
     
     @Value("${google.place.api.key}")
-    private String googleApiKey;
+    public String googleApiKey;
     
     
     private static final TransportationMode DEFAULT_MODE = TransportationMode.CAR;
