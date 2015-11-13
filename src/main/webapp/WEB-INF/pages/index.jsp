@@ -53,10 +53,25 @@
 		</form>
 		
 		<div id="address-container">
-		
 		</div>
 	</div>
-	
+
+	<div id="res-panel">
+		<img src="<c:url value='/img/logo.png'/>" class="logo" />
+		<h1>Result</h1>
+		<div class="res-detail">
+		</div>
+		<h1>Destination category</h1>
+		<div class="form-group">
+            <select class="form-control" id="ResPlaceType">
+            	<option value="">Nothing specific</option>
+            	<option value="any">Any point of interest</option>
+                <c:forEach var="placeType" items="${placeTypes}">
+                    <option value="<c:out value="${placeType.getGoogleApiName()}"/>"><c:out value="${placeType.getFrontEndName()}"/></option>
+                </c:forEach>
+            </select>
+		</div>
+	</div>	
 	<script src="<c:url value='/resources/jquery/jquery.min.js'/>"></script>
 	<script src="<c:url value='/resources/bootstrap/js/bootstrap.min.js'/>"></script>
 	<script src="https://maps.googleapis.com/maps/api/js?v=3.exp"></script>

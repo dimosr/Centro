@@ -137,3 +137,36 @@ p {
 #snd-desc {
 	display: none;
 }
+
+/*
+ * RESULT DISPLAYED
+ */
+ 
+#res-panel {
+	position: absolute;
+	width: 400px;
+	left: -400px;
+	top: 0;
+	min-height: 100%;
+	background: #A6B2Be;
+	padding: 10px;
+}
+
+#res-panel .logo {
+	display: block;
+	width: 75px;
+	margin: 10px;
+}
+
+#res-panel h1 {
+	color: #7fdbdc;
+	font-size: 90%;
+}
+
+#res-panel .res-detail {
+	background: #f6a901;
+	color: white;
+	border-radius: 10px;
+	padding: 10px;
+	text-align: center;
+}

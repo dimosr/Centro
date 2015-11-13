@@ -100,42 +100,55 @@ $submit.on('click', function() {
                 resMarker.setPosition({lat:res.latitude,lng:res.longitude});
             } else {
                 resMarker = createMarker({lat:res.latitude,lng:res.longitude}, resMarkerIcon, "Central Point");
+                resMarker.setDraggable(true);
+                google.maps.event.addListener(resMarker, 'dragend', function() {addPOI(res);});
             }
-		  
-            $('.grey-bkg').addClass('result-displayed');
             
-            // POI
-			res.radius = 10000;
-
-			var pType = $('#placeType').val();
-			
-			if (pType == "") {
-				return true;
-			}
-			
-			if (pType != "Any") {
-				res.type = pType;
-			}
-			
-			$.ajax({
-			    url: 'api/places',
-			  	dataType : 'json',
-			    contentType: "application/json;charset=utf-8",
-			  	type: 'POST',
-			    data: JSON.stringify(res),
-				success: function(places){		
-					placeMarkers.forEach(function(p){
-						 p.setMap(null);
-					});
-					placeMarkers = [];
-		            places.forEach(function(place){
-		            	var m = createMarker({lat:place.location.latitude,lng:place.location.longitude}, placeMarkerIcon, place.name);
-		            	placeMarkers.push(m);
-		            });
-		        }
-			 });
+            $('.res-detail').html('Lat: ' + res.latitude + ', Lng: ' + res.longitude);
+                     
+            $('.grey-bkg').animate({opacity: 0}, 'fast');
+            $('#map').animate({left: '400px'}, 'slow');
+            $('#res-panel').animate({left: '0px'}, 'slow');
+            map.fitBounds(bounds);
+            
+            addPOI(res, $('#placeType').val());
 		}
     });
+});
+
+function addPOI(res, pType) {
+	res.radius = 10000;
+	
+	if (pType == "") {
+		return true;
+	}
+	
+	if (pType != "Any") {
+		res.type = pType;
+	}
+	
+	$.ajax({
+	    url: 'api/places',
+	  	dataType : 'json',
+	    contentType: "application/json;charset=utf-8",
+	  	type: 'POST',
+	    data: JSON.stringify(res),
+		success: function(places){		
+			placeMarkers.forEach(function(p){
+				 p.setMap(null);
+			});
+			placeMarkers = [];
+            places.forEach(function(place){
+            	var m = createMarker({lat:place.location.latitude,lng:place.location.longitude}, placeMarkerIcon, place.name);
+            	placeMarkers.push(m);
+            });
+        }
+	 });
+}
+
+$('#ResPlaceType').on('change', function(){
+	var gPos = resMarker.getPosition();
+	addPOI("{latitude: " + gPos.lat + ",longitude: " + gPos.lng +"}", $('#placeType').val());
 });
 
 // Util --------------
