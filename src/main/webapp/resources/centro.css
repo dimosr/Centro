@@ -170,3 +170,48 @@ p {
 	padding: 10px;
 	text-align: center;
 }
+
+/*
+ * POI
+ */
+ 
+.rating {
+	position: relative;
+	width: 100px;
+	height: 20px;
+	background: lightgrey;
+	margin-bottom: 10px;
+}
+
+.rating .yellow {
+	position: absolute;
+	left: 0;
+	top: 0;
+	height: 20px;
+	background: #f6a901;
+}
+
+.rating img {
+	position: absolute;
+	top: 0;
+	left: 0;
+}
+
+.rating .rating-value {
+	position: absolute;
+	top: 3px;;
+	left: 103px;
+}
+
+.img-poi {
+	max-width: 210px;
+	max-height: 70px;
+	overflow: hidden;
+	margin-bottom: 10px;
+}
+
+.img-poi img {
+	display: inline-block;
+	max-width: 70px;
+	min-height: 70px;
+}

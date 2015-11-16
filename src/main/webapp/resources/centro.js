@@ -148,7 +148,38 @@ function addPOI(pType) {
 			});
 			placeMarkers = [];
             places.forEach(function(place){
-            	var m = createMarker({lat:place.location.latitude,lng:place.location.longitude}, placeMarkerIcon, place.name);
+            	var html = '<h4>'+place.name+'</h4>';
+            	if (place.info) {
+	            	if (place.info.averageRating != '-') {
+	            		var rating = 20 * parseFloat(place.info.averageRating);
+	            		html += '<div class="rating">';
+	            		html += '<div class="yellow" style="width: '+ parseInt(rating) +'px"></div>';
+	            		html += '<img src="' + starsImg + '"  alt="rating_template" />';
+	            		html += '<div class="rating-value">(' + place.info.averageRating + ')</div>';
+	            		html += '</div>';
+	            	}
+	            	
+	            	var img_len = place.info.imageLinks.length;
+	            	
+	            	if (img_len > 3) {
+	            		img_len = 3;
+	            	}
+
+	            	html += '<div class="img-poi">';
+	            	
+	            	for (var k = 0; k < img_len; ++k) {
+	            		html += '<img src="' + place.info.imageLinks[k] + '" alt="image poi" />';
+	            	}
+	            	
+	            	html += '</div>';
+	            	
+	            	if (place.info.websiteLink != '-') {
+	            		html += '<a href="' + place.info.websiteLink + '">Visit its website!</a>';
+	            	}
+	            	
+            	}
+            	
+            	var m = createMarker({lat:place.location.latitude,lng:place.location.longitude}, placeMarkerIcon, html);
             	placeMarkers.push(m);
             });
         }
