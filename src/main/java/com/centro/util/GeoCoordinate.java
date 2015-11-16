@@ -42,23 +42,4 @@ public class GeoCoordinate {
         return distanceInMeters;
     }
     
-    public List<GeoCoordinate> calculateEquiDistantPoints(double distance, int numberOfPoints) {
-        double centerLatitude = this.getLatitude();
-        double centerLongitude = this.getLongitude();
-        
-        List<GeoCoordinate> points = new ArrayList<GeoCoordinate>();
-        double pointLatitude, pointLongitude;
-        for(int i = 0; i < numberOfPoints; i++) {
-            double angle = (2*PI/numberOfPoints)*i;
-            pointLatitude = Math.asin(Math.sin(centerLatitude) * Math.cos(distance) + Math.cos(centerLatitude)* Math.sin(distance) * Math.cos(angle));
-            pointLongitude = centerLongitude +Math.atan2(Math.sin(angle) * Math.sin(distance) * Math.cos(centerLatitude), Math.cos(distance) - Math.sin(centerLatitude) * Math.sin(pointLatitude));
-            if (pointLongitude < -Math.PI)
-        	pointLongitude += (2 * Math.PI);
-            else if (pointLongitude > Math.PI)
-        	pointLongitude -= (2 * Math.PI);
-            points.add(new GeoCoordinate(pointLatitude, pointLongitude));
-        }
-        return points;
-    }
-    
 }
