@@ -172,6 +172,24 @@ p {
 }
 
 /*
+ * Loader
+ */
+ 
+#loader {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	width: 200px;
+	height: 115px;
+	margin-top: -55px;
+	margin-left: -100px;
+	background: white;
+	border: 1px solid #7FDBDC;
+	border-radius: 5px;
+	text-align: center;
+}
+
+/*
  * POI
  */
  
@@ -214,4 +232,8 @@ p {
 	display: inline-block;
 	max-width: 70px;
 	min-height: 70px;
+}
+
+.info-window {
+	min-width: 150px;
 }

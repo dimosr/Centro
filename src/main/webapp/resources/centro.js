@@ -26,10 +26,14 @@ $('#address-form').on('submit', function(e){
       
       var address = $address.val(),
       	  url = 'https://maps.googleapis.com/maps/api/geocode/json?address=' + encodeURIComponent(address);
-
+      
+      freeze();
+      
       $.ajax({
     	  url: url,
     	  success: function(obj){
+    		  unFreeze();
+    		  
     		  if (obj.status == 'OK') {
     			  var results = obj.results[0],
     			  	  lat = results.geometry.location.lat,
@@ -88,6 +92,8 @@ $submit.on('click', function() {
 	json.push({"latitude":$this.data('lat'), "longitude": $this.data('lng')});
     });
 	
+    freeze();
+    
     $.ajax({
 	    url: 'api/central',
 	  	dataType : 'json',
@@ -95,6 +101,8 @@ $submit.on('click', function() {
 	  	type: 'POST',
 	    data: JSON.stringify(json),
 		success: function(res){
+			unFreeze();
+			
 			// Central point
             /*if (resMarker) {
                 resMarker.setPosition({lat:res.latitude,lng:res.longitude});
@@ -112,14 +120,13 @@ $submit.on('click', function() {
             $('#map').animate({left: '400px'}, 'slow');
             $('#res-panel').animate({left: '0px'}, 'slow');
             map.fitBounds(bounds);
-            
-            addPOI($('#placeType').val());
 		}
     });
 });
 
-function addPOI(pType) {
+function addPOI() {
 	var gPos = resMarker.getPosition(),
+		pType = $('#ResPlaceType').val(),
 		res = {};
 	
 	res.latitude = gPos.lat();
@@ -136,19 +143,24 @@ function addPOI(pType) {
 		res.type = pType;
 	}
 	
+	freeze();
+	
 	$.ajax({
 	    url: 'api/places',
 	  	dataType : 'json',
 	    contentType: "application/json;charset=utf-8",
 	  	type: 'POST',
 	    data: JSON.stringify(res),
-		success: function(places){		
+		success: function(places){
+			
+			unFreeze();
+			
 			placeMarkers.forEach(function(p){
 				 p.setMap(null);
 			});
 			placeMarkers = [];
             places.forEach(function(place){
-            	var html = '<h4>'+place.name+'</h4>';
+            	var html = '<div class="info-window"><h4>'+place.name+'</h4>';
             	if (place.info) {
 	            	if (place.info.averageRating != '-') {
 	            		var rating = 20 * parseFloat(place.info.averageRating);
@@ -174,10 +186,12 @@ function addPOI(pType) {
 	            	html += '</div>';
 	            	
 	            	if (place.info.websiteLink != '-') {
-	            		html += '<a href="' + place.info.websiteLink + '">Visit its website!</a>';
+	            		html += '<a href="' + place.info.websiteLink + '" target="_blank">Visit its website!</a>';
 	            	}
 	            	
             	}
+            	
+            	html += '</div>';
             	
             	var m = createMarker({lat:place.location.latitude,lng:place.location.longitude}, placeMarkerIcon, html);
             	placeMarkers.push(m);
@@ -186,10 +200,8 @@ function addPOI(pType) {
 	 });
 }
 
-$('#ResPlaceType').on('change', function(){
-	var pType =  $('#ResPlaceType').val();
-	
-	addPOI(pType);
+$('#ResPlaceType').on('change', function(){	
+	addPOI();
 });
 
 // Util --------------
@@ -231,4 +243,14 @@ function createMarker(latLng, icon, infoText) {
 	});
 	
 	return marker;
+}
+
+function freeze() {
+	$('#loader').show();
+	$('input, select, button').attr('disabled', 'disabled');
+}
+
+function unFreeze() {
+	$('#loader').hide();
+	$('input, select, button').removeAttr('disabled');
 }
