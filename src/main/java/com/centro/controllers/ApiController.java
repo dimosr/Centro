@@ -3,6 +3,7 @@ package com.centro.controllers;
 import com.centro.services.HttpService;
 import com.centro.util.GeoCoordinate;
 import com.centro.util.Place;
+import com.centro.util.TransportationMode;
 import com.centro.util.algo.MeetingPointCalculator;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -59,7 +60,7 @@ public class ApiController {
             type = requestTree.findValue("type").asText();
         }
         else
-            type = "";
+            type = TransportationMode.CAR.getMapsFormat();
         
         List<Place> places = httpService.getPlacesInsideRadius(new GeoCoordinate(latitude, longitude), radius, type);
         String output = jsonMapper.writeValueAsString(places);
