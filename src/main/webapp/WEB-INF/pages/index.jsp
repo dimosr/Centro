@@ -40,20 +40,14 @@
 				<input type="text" class="form-control" placeholder="My address" id="address-input"><!--
 			 --><button class="btn btn-success" type="submit" id="add-button"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></button>
 			 </div>
-			 <div class="form-group">
-			 	<p>You can also specify what you're looking for:</p>
-                <select class="form-control" id="placeType">
-                	<option value="">Nothing specific</option>
-                	<option value="any">Any point of interest</option>
-                    <c:forEach var="placeType" items="${placeTypes}">
-                        <option value="<c:out value="${placeType.getGoogleApiName()}"/>"><c:out value="${placeType.getFrontEndName()}"/></option>
-                    </c:forEach>
-                </select>
-			</div>
 		</form>
 		
 		<div id="address-container">
 		</div>
+	</div>
+	
+	<div id="loader" style="display:none;">
+		<img src="<c:url value='/img/loader.gif'/>" alt="loading" />
 	</div>
 
 	<div id="res-panel">
