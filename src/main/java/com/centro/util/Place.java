@@ -1,11 +1,14 @@
 package com.centro.util;
 
+import java.util.List;
+
 public class Place {
     
-    private String googleID;
-    private GeoCoordinate location;
-    private String name;
+    private final String googleID;
+    private final GeoCoordinate location;
+    private final String name;
     private PlaceInfo info;
+    private List<Long> secondsToReach;
     
     public Place(String googleID, GeoCoordinate location, String name) {
         this.googleID = googleID;
@@ -31,5 +34,13 @@ public class Place {
     
     public PlaceInfo getInfo() {
         return this.info;
+    }
+    
+    public void setSecondsToReach(List<Long> seconds) {
+        this.secondsToReach = seconds;
+    }
+    
+    public List<Long> getSecondsToReach() {
+        return this.secondsToReach;
     }
 }

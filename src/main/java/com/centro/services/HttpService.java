@@ -10,6 +10,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
@@ -114,8 +115,8 @@ public class HttpService {
         Iterator<JsonNode> placesNodes = responseTree.get("results").elements();
         
        
-        List<GeoCoordinate> placesCoordinates = new ArrayList();
-        List<Place> places = new ArrayList();
+        List<GeoCoordinate> selectedPlacesCoordinates = new ArrayList();
+        List<Place> selectedPlaces = new ArrayList();
         while(placesNodes.hasNext()) {
             JsonNode placeNode = placesNodes.next();
             String id = placeNode.findValue("place_id").asText();
@@ -124,32 +125,24 @@ public class HttpService {
             GeoCoordinate location = new GeoCoordinate(latitude, longitude);
             String name = placeNode.findValue("name").asText();
             
-            placesCoordinates.add(new GeoCoordinate(latitude, longitude));
-            Place place = new Place(id, location, name);
-            places.add(place);
-            place.setInfo(getPlaceInfo(place));
+            selectedPlacesCoordinates.add(new GeoCoordinate(latitude, longitude));
+            Place selectedPlace = new Place(id, location, name);
+            selectedPlaces.add(selectedPlace);
+            selectedPlace.setInfo(getPlaceInfo(selectedPlace));
         }
         
         /* Sorting By Time */
-        List<Long> distancesInSeconds = distanceInSeconds(center, placesCoordinates);
-        List<Tuple<Place, Long>> placesWithTime = new ArrayList();
-        for(int i = 0; i < places.size(); i++) {
-            placesWithTime.add(new Tuple(places.get(i), distancesInSeconds.get(i)));
+        for(Place place : selectedPlaces) {
+            List<Long> distancesInSeconds = distanceInSeconds(center, Arrays.asList(place.getLocation()));
+            place.setSecondsToReach(distancesInSeconds);
         }
-        Collections.sort(placesWithTime, new Comparator<Tuple<Place, Long>>() {
-            public int compare(Tuple<Place, Long> obj1, Tuple<Place, Long> obj2) {
-                return obj2.second.compareTo(obj1.second);
-            }
-        });
+        sortByTimeSum(selectedPlaces);
         
         /* Keeping Top10 */
-        int topLimit = (places.size() > 10) ? 10 : places.size();
-        places.clear();
-        for(int i = 0; i < topLimit; i++) {
-            places.add(placesWithTime.get(i).first);
-        }
+        int topLimit = (selectedPlaces.size() > 10) ? 10 : selectedPlaces.size();
+        selectedPlaces = selectedPlaces.subList(0, topLimit);
         
-        return places;
+        return selectedPlaces;
     }
     
     
@@ -177,5 +170,29 @@ public class HttpService {
         PlaceInfo placeInfo = new PlaceInfo(imageLinks, averageRating, websiteLink);
         
         return placeInfo;
+    }
+    
+    public void sortByTimeSum(List<Place> unsortedPlaces) {
+        for(int i = 0; i < (unsortedPlaces.size()-1); i++) {
+            if(unsortedPlaces.get(i).getSecondsToReach().size() != unsortedPlaces.get(i+1).getSecondsToReach().size())
+                throw new IllegalArgumentException();
+        }
+        List<Tuple<Place, Long>> placesWithTime = new ArrayList();
+        Collections.sort(unsortedPlaces, new Comparator<Place>() {
+            @Override
+            public int compare(Place place1, Place place2) {
+                long sum1 = 0, sum2 = 0;
+                for(int i = 0; i < place1.getSecondsToReach().size(); i++) {
+                    sum1 += place1.getSecondsToReach().get(i);
+                    sum2 += place2.getSecondsToReach().get(i);
+                }
+                if(sum1 < sum2)
+                    return -1;
+                else if(sum1 == sum2)
+                    return 0;
+                else
+                    return 1;
+            }
+        });
     }
 }
