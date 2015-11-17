@@ -110,6 +110,7 @@ public class HttpServiceTest {
         assertEquals(expectedSortedList, initialPlaceList);
     }
     
+    @Test
     public void keepNearestPlaces() throws IOException {
         GeoCoordinate startingPoint1 = new GeoCoordinate(56.02, 0.094);
         GeoCoordinate startingPoint2 = new GeoCoordinate(51.54, -0.744);
@@ -123,8 +124,6 @@ public class HttpServiceTest {
         when(service.distanceInSecondsByMode(place1.getLocation(), Arrays.asList(startingPoint1, startingPoint2), any(TransportationMode.class))).thenReturn(Arrays.asList(new Long(233), new Long(344)));     //total cost: 577
         when(service.distanceInSecondsByMode(place2.getLocation(), Arrays.asList(startingPoint1, startingPoint2), any(TransportationMode.class))).thenReturn(Arrays.asList(new Long(278), new Long(324)));     //total cost: 602
         when(service.distanceInSecondsByMode(place2.getLocation(), Arrays.asList(startingPoint1, startingPoint2), any(TransportationMode.class))).thenReturn(Arrays.asList(new Long(221), new Long(352)));     //total cost: 573
-        
-        
         
         assertEquals(top2List, service.keepNearestPlaces(initialPlaceList, Arrays.asList(startingPoint1, startingPoint2), Arrays.asList(TransportationMode.CAR.getMapsFormat(), TransportationMode.CAR.getMapsFormat()), 2));
         
