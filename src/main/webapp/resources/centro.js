@@ -19,6 +19,7 @@ var $address = $('#address-input'),
 	$firstDescContainer = $('#first-desc'),
 	$sndDescContainer = $('#snd-desc'),
 	bounds = new google.maps.LatLngBounds(),
+	directions = [],
 	markers = [];
 
 $('#address-form').on('submit', function(e){
@@ -81,7 +82,7 @@ $('#address-form').on('submit', function(e){
 /* Send Form */
 
 var resMarker = false,
-	placeMarkers = []
+	placeMarkers = [],
 	$submit = $('#submit');
 
 $submit.on('click', function() {
@@ -120,9 +121,17 @@ $submit.on('click', function() {
             $('#map').animate({left: '400px'}, 'slow');
             $('#res-panel').animate({left: '0px'}, 'slow');
             map.fitBounds(bounds);
+            addRoutes();
 		}
     });
 });
+
+$('#ResPlaceType').on('change', function(){	
+	addPOI();
+});
+
+// Util --------------
+var currentInfoWindow = null;
 
 function addPOI() {
 	var gPos = resMarker.getPosition(),
@@ -131,6 +140,17 @@ function addPOI() {
 	
 	res.latitude = gPos.lat();
 	res.longitude = gPos.lng();
+	
+	res.startingPoints = [];
+	
+	for (var i = 0; i < markers.length; ++i) {
+		var mPos = markers[i].getPosition()
+		res.startingPoints.push({
+			latitude: mPos.lat(),
+			longitude: mPos.lng(),
+			mode: 'DRIVING'
+		});
+	}
 	
 	
 	res.radius = 5000;
@@ -200,13 +220,6 @@ function addPOI() {
 	 });
 }
 
-$('#ResPlaceType').on('change', function(){	
-	addPOI();
-});
-
-// Util --------------
-var currentInfoWindow = null;
-
 function createMarker(latLng, icon, infoText) {
 	var marker = new google.maps.Marker({
 		icon: icon,
@@ -253,4 +266,47 @@ function freeze() {
 function unFreeze() {
 	$('#loader').hide();
 	$('input, select, button').removeAttr('disabled');
+}
+
+function addRoutes() {
+	if (typeof(resMarker) == 'null') {
+		return;
+	}
+	
+	var resPos = resMarker.getPosition(),	
+		destString = resPos.lat() + ',' + resPos.lng();
+	
+	for (var i = 0; i < markers.length; ++i) {
+		 var start = markers[i].getPosition(),
+		 	 directionsService = new google.maps.DirectionsService(),
+		 	 //directionsDisplay = new google.maps.DirectionsRenderer(),
+		 	 directionsRequest = {
+				 origin: start.lat() + ',' + start.lng(),
+				 destination: destString,
+				 travelMode: google.maps.DirectionsTravelMode.DRIVING,
+				 unitSystem: google.maps.UnitSystem.METRIC
+		 	};
+		 
+		 //directionsDisplay.setMap(map);
+		 
+		 directionsService.route(directionsRequest, function (response, status) {
+			 if (status == google.maps.DirectionsStatus.OK) {
+				 //directionsDisplay.setDirections(response);
+				 var path = response.routes[0].overview_path,
+				 	 direction = new google.maps.Polyline({
+					    path: path,
+					    geodesic: true,
+					    strokeColor: '#FF0000',
+					    strokeOpacity: 1.0,
+					    strokeWeight: 2
+					  });
+
+					  direction.setMap(map);
+					  directions.push(direction);
+			 }
+			 else {
+				 //Error has occured
+			 }
+		 });
+	}
 }
