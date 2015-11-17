@@ -105,6 +105,19 @@ public class HttpService {
         return distanceInSecondsByMode(from, to, TransportationMode.CAR);
     }
     
+    public List<Place> keepNearestPlaces(List<Place> unfilteredPlaces, GeoCoordinate center, int topSize) throws IOException {
+        for(Place place : unfilteredPlaces) {
+            List<Long> distancesInSeconds = distanceInSeconds(center, Arrays.asList(place.getLocation()));
+            place.setSecondsToReach(distancesInSeconds);
+        }
+        sortByTimeSum(unfilteredPlaces);
+        
+        int topLimit = (unfilteredPlaces.size() > topSize) ? topSize : unfilteredPlaces.size();
+        List<Place> nearestPlaces = unfilteredPlaces.subList(0, topLimit);
+        
+        return nearestPlaces;
+    }
+    
     public List<Place> getPlacesInsideRadius(GeoCoordinate center, double radius, String type) throws IOException {
         
         String locationString = center.getLatitude() + "," + center.getLongitude();
@@ -115,7 +128,6 @@ public class HttpService {
         Iterator<JsonNode> placesNodes = responseTree.get("results").elements();
         
        
-        List<GeoCoordinate> selectedPlacesCoordinates = new ArrayList();
         List<Place> selectedPlaces = new ArrayList();
         while(placesNodes.hasNext()) {
             JsonNode placeNode = placesNodes.next();
@@ -125,23 +137,11 @@ public class HttpService {
             GeoCoordinate location = new GeoCoordinate(latitude, longitude);
             String name = placeNode.findValue("name").asText();
             
-            selectedPlacesCoordinates.add(new GeoCoordinate(latitude, longitude));
             Place selectedPlace = new Place(id, location, name);
-            selectedPlaces.add(selectedPlace);
             selectedPlace.setInfo(getPlaceInfo(selectedPlace));
+            
+            selectedPlaces.add(selectedPlace);
         }
-        
-        /* Sorting By Time */
-        for(Place place : selectedPlaces) {
-            List<Long> distancesInSeconds = distanceInSeconds(center, Arrays.asList(place.getLocation()));
-            place.setSecondsToReach(distancesInSeconds);
-        }
-        sortByTimeSum(selectedPlaces);
-        
-        /* Keeping Top10 */
-        int topLimit = (selectedPlaces.size() > 10) ? 10 : selectedPlaces.size();
-        selectedPlaces = selectedPlaces.subList(0, topLimit);
-        
         return selectedPlaces;
     }
     

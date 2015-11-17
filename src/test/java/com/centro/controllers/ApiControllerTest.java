@@ -61,13 +61,13 @@ public class ApiControllerTest {
         Place place2 = new Place("googleID2", new GeoCoordinate(51.4977507, -0.0994656), "club2");
         PlaceInfo info2 = new PlaceInfo(Arrays.asList("www.image3.com"), "2.3", "http://club2.com");
         place2.setInfo(info2);
-        List<Place> places = new ArrayList();
-        places.add(place1);
-        places.add(place2);
+        List<Place> places = Arrays.asList(place1, place2);
+        List<Place> sortedPlaces = Arrays.asList(place2, place1);
         when(service.getPlacesInsideRadius(any(GeoCoordinate.class), any(Integer.class), any(String.class))).thenReturn(places);
+        when(service.keepNearestPlaces(any(List.class), any(GeoCoordinate.class), any(Integer.class))).thenReturn(sortedPlaces);
         
         ObjectMapper jsonMapper = new ObjectMapper();
-        String expectedResponse = jsonMapper.writeValueAsString(places);
+        String expectedResponse = jsonMapper.writeValueAsString(sortedPlaces);
         
         String actualResponse = controller.places(query);
         assertEquals(expectedResponse, actualResponse);

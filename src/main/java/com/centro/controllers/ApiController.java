@@ -60,7 +60,8 @@ public class ApiController {
             type = "";
         
         List<Place> places = httpService.getPlacesInsideRadius(new GeoCoordinate(latitude, longitude), radius, type);
-        String output = jsonMapper.writeValueAsString(places);
+        List<Place> nearestPlaces = httpService.keepNearestPlaces(places, new GeoCoordinate(latitude, longitude), 10);
+        String output = jsonMapper.writeValueAsString(nearestPlaces);
         return output;
     }
 }
