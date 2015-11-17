@@ -1,7 +1,9 @@
 <!DOCTYPE html>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page import="com.centro.util.PlaceType" %>
-<%  pageContext.setAttribute("placeTypes", PlaceType.values()); %> 
+<%@ page import="com.centro.util.TransportationMode" %>
+<%  pageContext.setAttribute("placeTypes", PlaceType.values()); %>
+<%  pageContext.setAttribute("transportationModes", TransportationMode.values()); %> 
 <html>
 <head>
 	<meta charset="utf-8">
@@ -42,8 +44,7 @@
 			 </div>
 		</form>
 		
-		<div id="address-container">
-		</div>
+		<div id="address-container"></div>
 	</div>
 	
 	<div id="loader" style="display:none;">
@@ -55,16 +56,39 @@
 		<h1>Result</h1>
 		<div class="res-detail">
 		</div>
-		<h1>Destination category</h1>
-		<div class="form-group">
-            <select class="form-control" id="ResPlaceType">
-            	<option value="">Nothing specific</option>
-            	<option value="any">Any point of interest</option>
-                <c:forEach var="placeType" items="${placeTypes}">
-                    <option value="<c:out value="${placeType.getGoogleApiName()}"/>"><c:out value="${placeType.getFrontEndName()}"/></option>
-                </c:forEach>
-            </select>
+		
+		<h1>Filters</h1>
+		<ul class="nav nav-pills nav-justified filter-pills" role="tablist">
+		    <li role="presentation" class="active"><a href="#dest-pane" aria-controls="dest-pane" role="tab" data-toggle="tab">Destination</a></li>
+		    <li role="presentation"><a href="#start-pane" aria-controls="start-pane" role="tab" data-toggle="tab">Starting points</a></li>
+		</ul>
+
+	  	<div class="tab-content">
+		    <div role="tabpanel" class="tab-pane fade in active" id="dest-pane">
+		    	<h2>Destination category</h2>
+				<div class="form-group">
+		            <select class="form-control" id="ResPlaceType">
+		            	<option value="">Nothing specific</option>
+		            	<option value="any">Any point of interest</option>
+		                <c:forEach var="placeType" items="${placeTypes}">
+		                    <option value="<c:out value="${placeType.getGoogleApiName()}"/>"><c:out value="${placeType.getFrontEndName()}"/></option>
+		                </c:forEach>
+		            </select>
+				</div>
+			</div>
+	    	<div role="tabpanel" class="tab-pane fade" id="start-pane">
+	    		<h2>Addresses</h2>
+	    		<div id="res-address-container"></div>
+	    	</div>
+
 		</div>
+	</div>
+	<div style="display:none;" id="mean-select">
+		<select class="form-control">
+            <c:forEach var="transportationMode" items="${transportationModes}">
+                <option value="<c:out value="${transportationMode.getMapsFormat()}"/>"><c:out value="${transportationMode.getFrontEndName()}"/></option>
+            </c:forEach>
+        </select>
 	</div>	
 	<script src="<c:url value='/resources/jquery/jquery.min.js'/>"></script>
 	<script src="<c:url value='/resources/bootstrap/js/bootstrap.min.js'/>"></script>

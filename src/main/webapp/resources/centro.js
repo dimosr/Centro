@@ -16,6 +16,7 @@ var geocoder = new google.maps.Geocoder();
 
 var $address = $('#address-input'),
 	$addressContainer = $('#address-container'),
+	$resAddressContainer = $('#res-address-container'),
 	$firstDescContainer = $('#first-desc'),
 	$sndDescContainer = $('#snd-desc'),
 	bounds = new google.maps.LatLngBounds(),
@@ -40,10 +41,10 @@ $('#address-form').on('submit', function(e){
     			  	  lat = results.geometry.location.lat,
     			  	  lng = results.geometry.location.lng;
     			  
-    			  $addressContainer.append('<div class="address" data-lat="'+lat+'" data-lng="'+lng+'" data-marker="'+markers.length+'">'
-    					  					+'<div class="delete" aria-label="delete"><span aria-hidden="true">&times;</span></div>'
+    			  $addressContainer.append('<div class="address" data-lat="'+lat+'" data-lng="'+lng+'" data-mean="driving" data-marker="'+markers.length+'">'
+    					  					+'<div class="delete" aria-label="delete"><span aria-hidden="true">&times;</span></div><span class="text">'
     					  					+results.formatted_address
-					  						+'</div>');
+					  						+'</span></div>');
     			  
     			  $firstDescContainer.fadeOut(function(){
     				  $sndDescContainer.fadeIn();
@@ -85,7 +86,17 @@ var resMarker = false,
 	placeMarkers = [],
 	$submit = $('#submit');
 
-$submit.on('click', function() {
+$submit.on('click', calcCentralPoint);
+
+$('#ResPlaceType').on('change', function(){	
+	addPOI();
+});
+
+// Util --------------
+var currentInfoWindow = null,
+	resPanelOpened = false;
+
+function calcCentralPoint() {
     var json = [];
     
     $('.address').each(function() {
@@ -105,37 +116,50 @@ $submit.on('click', function() {
 			unFreeze();
 			
 			// Central point
-            /*if (resMarker) {
+            if (resMarker) {
                 resMarker.setPosition({lat:res.latitude,lng:res.longitude});
-            } else {*/
+            } else {
                 resMarker = createMarker({lat:res.latitude,lng:res.longitude}, resMarkerIcon, "Central Point");
                 resMarker.setDraggable(true);
-                google.maps.event.addListener(resMarker, 'dragend', function() {addPOI($('#ResPlaceType').val());});
-            //}
+                google.maps.event.addListener(resMarker, 'dragend', function() {
+                	addPOI($('#ResPlaceType').val());
+                	addRoutes();
+                });
+            }
             
             $('.res-detail').html('Lat: ' + res.latitude + ', Lng: ' + res.longitude);
-                     
-            $('.grey-bkg').animate({opacity: 0}, 'fast', function() {
-            	$('.grey-bkg').hide();
-            });
-            $('#map').animate({left: '400px'}, 'slow');
-            $('#res-panel').animate({left: '0px'}, 'slow');
+            
+            if (!resPanelOpened) {
+	            // Copy starting points into 
+	            var select = $('#mean-select').html();
+	            $resAddressContainer.html($addressContainer.html());
+	            $resAddressContainer.find('.delete').remove();
+	            $resAddressContainer.find('.address').append(select);
+	            $resAddressContainer.find('select').on('change', function() {
+	            	var $this = $(this);
+	            	$this.parent().data('mean', $this.val());
+	            	addRoutes();
+	            });
+	            
+	            //end copying/cleaning
+	                     
+	            $('.grey-bkg').animate({opacity: 0}, 'fast', function() {
+	            	$('.grey-bkg').remove();
+	            });
+	            $('#map').animate({left: '400px'}, 'slow');
+	            $('#res-panel').animate({left: '0px'}, 'slow');
+            }
+            
             map.fitBounds(bounds);
             addRoutes();
 		}
     });
-});
-
-$('#ResPlaceType').on('change', function(){	
-	addPOI();
-});
-
-// Util --------------
-var currentInfoWindow = null;
+}
 
 function addPOI() {
 	var gPos = resMarker.getPosition(),
 		pType = $('#ResPlaceType').val(),
+		$addresses = $('.address');
 		res = {};
 	
 	res.latitude = gPos.lat();
@@ -143,12 +167,11 @@ function addPOI() {
 	
 	res.startingPoints = [];
 	
-	for (var i = 0; i < markers.length; ++i) {
-		var mPos = markers[i].getPosition()
+	for (var i = 0; i < $addresses.length; ++i) {
 		res.startingPoints.push({
-			latitude: mPos.lat(),
-			longitude: mPos.lng(),
-			mode: 'DRIVING'
+			latitude: $($addresses[i]).data('lat'),
+			longitude: $($addresses[i]).data('lng'),
+			mode: $($addresses[i]).data('mean')
 		});
 	}
 	
@@ -270,17 +293,25 @@ function addRoutes() {
 		return;
 	}
 	
-	var resPos = resMarker.getPosition(),	
-		destString = resPos.lat() + ',' + resPos.lng();
+	//Clean
+	for (var k = 0; k < directions.length; ++k) {
+		directions[k].setMap(null);
+	}
 	
-	for (var i = 0; i < markers.length; ++i) {
-		 var start = markers[i].getPosition(),
-		 	 directionsService = new google.maps.DirectionsService(),
+	directions = [];
+	// ---- End Cleaning
+	
+	var resPos = resMarker.getPosition(),	
+		destString = resPos.lat() + ',' + resPos.lng(),
+		$addresses = $('.address');
+	
+	for (var i = 0; i < $addresses.length; ++i) {
+		 var directionsService = new google.maps.DirectionsService(),
 		 	 //directionsDisplay = new google.maps.DirectionsRenderer(),
 		 	 directionsRequest = {
-				 origin: start.lat() + ',' + start.lng(),
+				 origin: $($addresses[i]).data('lat') + ',' + $($addresses[i]).data('lng'),
 				 destination: destString,
-				 travelMode: google.maps.DirectionsTravelMode.DRIVING,
+				 travelMode: google.maps.DirectionsTravelMode[$($addresses[i]).data('mean').toUpperCase()],
 				 unitSystem: google.maps.UnitSystem.METRIC
 		 	};
 		 

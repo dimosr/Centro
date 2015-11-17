@@ -159,16 +159,34 @@ p {
 }
 
 #res-panel h1 {
+	color: white;
+	font-size: 120%;
+}
+
+#res-panel h2 {
 	color: #7fdbdc;
-	font-size: 90%;
+	font-size: 110%;
 }
 
 #res-panel .res-detail {
 	background: #f6a901;
 	color: white;
-	border-radius: 10px;
+	border-radius: 5px;
 	padding: 10px;
 	text-align: center;
+}
+
+#res-address-container .address .text {
+	display: inline-block;
+	width: 60%;
+}
+
+#res-address-container .address select {
+	display: inline-block;
+	width: 35%;
+	position: absolute;
+	right: 5px;
+	top: 25%;
 }
 
 /*
@@ -187,6 +205,14 @@ p {
 	border: 1px solid #7FDBDC;
 	border-radius: 5px;
 	text-align: center;
+}
+
+/*
+ * Filters
+ */
+ 
+.filter-pills {
+	margin-top: 10px;
 }
 
 /*

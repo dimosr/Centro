@@ -1,17 +1,23 @@
 package com.centro.util;
 
 public enum TransportationMode {
-    CAR("driving"), 
-    WALKING("walking"), 
-    BICYCLE("bicycling"), 
-    PUBLIC_TRANSIT("transit");
+    CAR("driving", "Driving"), 
+    WALKING("walking", "Walking"), 
+    BICYCLE("bicycling", "Cycling"), 
+    PUBLIC_TRANSIT("transit", "Public transportation");
     
     private String mapsFormat;
-    TransportationMode(String mapsFormat) {
+    private String frontEndName;
+    TransportationMode(String mapsFormat, String frontEndName) {
         this.mapsFormat = mapsFormat;
+        this.frontEndName = frontEndName;
     }
     
     public String getMapsFormat() {
         return mapsFormat;
+    }
+    
+    public String getFrontEndName() {
+        return frontEndName;
     }
 }
