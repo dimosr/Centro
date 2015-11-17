@@ -88,7 +88,22 @@ public class HttpServiceTest {
         assertEquals(expectedInfo.imageLinks.get(0), actualInfo.imageLinks.get(0));
         assertEquals(expectedInfo.imageLinks.get(1), actualInfo.imageLinks.get(1));
         assertEquals(expectedInfo.websiteLink, actualInfo.websiteLink);
+    }
+    
+    @Test
+    public void sortByTimeSumTest() {
+        Place place1 = new Place("googleID1", new GeoCoordinate(45.34, -0.1234), "cafe1");
+        Place place2 = new Place("googleID2", new GeoCoordinate(54.45, -0.2345), "cafe2");
+        Place place3 = new Place("googleID3", new GeoCoordinate(48.93, -0.9911), "cafe3");
         
+        place1.setSecondsToReach(Arrays.asList(new Long(233), new Long(344)));      //total cost: 577
+        place2.setSecondsToReach(Arrays.asList(new Long(278), new Long(324)));      //total cost: 602
+        place3.setSecondsToReach(Arrays.asList(new Long(221), new Long(352)));      //total cost: 573
         
+        List<Place> initialPlaceList = Arrays.asList(place1, place2, place3);
+        List<Place> expectedSortedList = Arrays.asList(place3, place1, place2);
+        
+        service.sortByTimeSum(initialPlaceList);
+        assertEquals(expectedSortedList, initialPlaceList);
     }
 }
