@@ -227,10 +227,10 @@ function addPOI() {
 	            	
 	            	if (place.info.websiteLink != '-') {
 	            		html += '<a href="' + place.info.websiteLink + '" target="_blank">Visit its website!</a>';
-	            	}
-	            	
+	            	}	            	
             	}
             	
+            	html += '<div style="text-align: right;"><button class="btn btn-success" onclick="newCentro('+place.location.latitude+','+place.location.longitude+')">Make it Centro!</button></div>';
             	html += '</div>';
             	
             	var m = createMarker({lat:place.location.latitude,lng:place.location.longitude}, placeMarkerIcon, html);
@@ -276,6 +276,12 @@ function createMarker(latLng, icon, infoText) {
 	});
 	
 	return marker;
+}
+
+function newCentro(lat, lng) {
+	resMarker.setPosition({lat:lat,lng:lng});
+	addPOI($('#ResPlaceType').val());
+	addRoutes();
 }
 
 function freeze() {
