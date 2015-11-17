@@ -164,6 +164,7 @@ public class HttpService {
                 String referenceID = photo.findValue("photo_reference").asText();
                 String imageLink = MessageFormat.format(PLACES_PHOTOS_API, referenceID, googleApiKey);
                 imageLinks.add(imageLink);
+                retrievedImages++;
             }
         }   
         
