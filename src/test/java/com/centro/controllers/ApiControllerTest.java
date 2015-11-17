@@ -1,22 +1,43 @@
 package com.centro.controllers;
 
+import com.centro.services.HttpService;
+import com.centro.util.GeoCoordinate;
+import com.centro.util.Place;
+import com.centro.util.PlaceInfo;
+import com.centro.util.PlaceType;
+import com.centro.util.algo.EquiDistantCalculator;
+import com.centro.util.algo.MeetingPointCalculator;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import static org.junit.Assert.assertEquals;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.mockito.InjectMocks;
+import static org.mockito.Matchers.any;
+import org.mockito.Mock;
+import static org.mockito.Mockito.when;
+import org.mockito.Spy;
+import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.stereotype.Controller;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-@RunWith(SpringJUnit4ClassRunner.class)
+@RunWith(MockitoJUnitRunner.class)
 @ContextConfiguration(locations = {"classpath:mvc-dispatcher-servlet.xml"})
 @Controller
 public class ApiControllerTest {
     
-    @Autowired
-    ApiController controller;
+    @InjectMocks
+    private ApiController controller;
+    
+    @Mock
+    private static HttpService service;
+    
+    @Spy
+    private MeetingPointCalculator calculator = new EquiDistantCalculator();
+    
     
     @Test
     public void centralTest() throws IOException {
@@ -24,6 +45,31 @@ public class ApiControllerTest {
         String expectedResponse = "{\"latitude\":51.63104157780866,\"longitude\":-0.691218624225265}";
         
         String actualResponse = controller.central(query);
+        assertEquals(expectedResponse, actualResponse);
+    }
+    
+    @Test
+    public void placesTest() throws IOException {
+        GeoCoordinate inputCoord = new GeoCoordinate(51.53128283381906, -0.15418765192555384);
+        double radius = 5000;
+        PlaceType placeType = PlaceType.NIGHT_CLUB;
+        String query = "{\"latitude\": " + inputCoord.getLatitude() + ", \"longitude\":" + inputCoord.getLongitude() + ", \"radius\": " + radius + ", \"type\": \"" + placeType.getGoogleApiName() + "\"}";
+        
+        Place place1 = new Place("googleID1", new GeoCoordinate(51.4977507, -0.0994656), "club1");
+        PlaceInfo info1 = new PlaceInfo(Arrays.asList("www.image1.com", "www.image2.com"), "4.2", "http://club1.com");
+        place1.setInfo(info1);
+        Place place2 = new Place("googleID2", new GeoCoordinate(51.4977507, -0.0994656), "club2");
+        PlaceInfo info2 = new PlaceInfo(Arrays.asList("www.image3.com"), "2.3", "http://club2.com");
+        place2.setInfo(info2);
+        List<Place> places = new ArrayList();
+        places.add(place1);
+        places.add(place2);
+        when(service.getPlacesInsideRadius(any(GeoCoordinate.class), any(Integer.class), any(String.class))).thenReturn(places);
+        
+        ObjectMapper jsonMapper = new ObjectMapper();
+        String expectedResponse = jsonMapper.writeValueAsString(places);
+        
+        String actualResponse = controller.places(query);
         assertEquals(expectedResponse, actualResponse);
     }
     

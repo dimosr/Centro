@@ -3,7 +3,6 @@ package com.centro.controllers;
 import com.centro.services.HttpService;
 import com.centro.util.GeoCoordinate;
 import com.centro.util.Place;
-import com.centro.util.TransportationMode;
 import com.centro.util.algo.MeetingPointCalculator;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -12,7 +11,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -28,7 +26,6 @@ public class ApiController {
     HttpService httpService;
     
     @Autowired
-    @Qualifier("equiDistantCalculator")
     private MeetingPointCalculator calculator;
     
     @RequestMapping(value = "/api", method = RequestMethod.GET, produces="application/json")
@@ -60,7 +57,7 @@ public class ApiController {
             type = requestTree.findValue("type").asText();
         }
         else
-            type = TransportationMode.CAR.getMapsFormat();
+            type = "";
         
         List<Place> places = httpService.getPlacesInsideRadius(new GeoCoordinate(latitude, longitude), radius, type);
         String output = jsonMapper.writeValueAsString(places);

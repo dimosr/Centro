@@ -36,7 +36,7 @@ public class HttpService {
     public String googleApiKey;
     
     
-    private static final TransportationMode DEFAULT_MODE = TransportationMode.CAR;
+    public static final TransportationMode DEFAULT_MODE = TransportationMode.CAR;
     
     private RestTemplate restRequest;
     private HttpHeaders headers;
