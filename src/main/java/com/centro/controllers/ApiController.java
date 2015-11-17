@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 public class ApiController {
     
     private static final String apiVersion = "1.1";
+    private static final int TOP_PLACES = 5;
     
     @Autowired
     HttpService httpService;
@@ -75,7 +76,7 @@ public class ApiController {
             preferredModes.add(mode);
         }
         
-        List<Place> nearestPlaces = httpService.keepNearestPlaces(places, startingPoints, preferredModes, 10);
+        List<Place> nearestPlaces = httpService.keepNearestPlaces(places, startingPoints, preferredModes, TOP_PLACES);
         String output = jsonMapper.writeValueAsString(nearestPlaces);
         return output;
     }
