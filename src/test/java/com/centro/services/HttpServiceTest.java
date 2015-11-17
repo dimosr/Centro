@@ -93,7 +93,7 @@ public class HttpServiceTest {
         assertEquals(expectedInfo.websiteLink, actualInfo.websiteLink);
     }
     
-    @Test
+    @Test(expected = IllegalArgumentException.class)
     public void sortByTimeSumTest() {
         Place place1 = new Place("googleID1", new GeoCoordinate(45.34, -0.1234), "cafe1");
         Place place2 = new Place("googleID2", new GeoCoordinate(54.45, -0.2345), "cafe2");
@@ -108,6 +108,12 @@ public class HttpServiceTest {
         
         service.sortByTimeSum(initialPlaceList);
         assertEquals(expectedSortedList, initialPlaceList);
+        
+        Place place4 = new Place("googleID", new GeoCoordinate(52.93, -0.6911), "cafe4");
+        place3.setSecondsToReach(Arrays.asList(new Long(221)));
+        List<Place> falsePlaceList = Arrays.asList(place1, place2, place4);
+        
+        service.sortByTimeSum(falsePlaceList);
     }
     
     @Test
