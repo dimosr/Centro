@@ -27,7 +27,7 @@ public class HttpService {
     public static final String GEOCODE_API = "https://maps.googleapis.com/maps/api/geocode/json?address={address}";
     public static final String REVERSE_GEOCODE_API = "https://maps.googleapis.com/maps/api/geocode/json?latlng={latitude},{longitude}";
     public static final String DISTANCE_API = "https://maps.googleapis.com/maps/api/distancematrix/json?origins={origins}&destinations={destinations}&mode={mode}";
-    public static final String PLACES_API = "https://maps.googleapis.com/maps/api/place/nearbysearch/json?location={location}&radius={radius}&types={types}&key={key}&name={name}";
+    public static final String PLACES_API = "https://maps.googleapis.com/maps/api/place/nearbysearch/json?location={location}&rankby=distance&types={types}&key={key}&name={name}";
     public static final String PLACES_DETAILS_API = "https://maps.googleapis.com/maps/api/place/details/json?placeid={placeID}&key={key}";
     public static final String PLACES_PHOTOS_API = "https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference={0}&key={1}";
     
@@ -122,7 +122,7 @@ public class HttpService {
     public List<Place> getPlacesInsideRadius(GeoCoordinate center, double radius, String type) throws IOException {
         
         String locationString = center.getLatitude() + "," + center.getLongitude();
-        String response = restRequest.getForObject(PLACES_API, String.class, locationString, radius, type, googleApiKey, "");
+        String response = restRequest.getForObject(PLACES_API, String.class, locationString, type, googleApiKey, "");
         
         ObjectMapper jsonMapper = new ObjectMapper();
         JsonNode responseTree = jsonMapper.readTree(response);
