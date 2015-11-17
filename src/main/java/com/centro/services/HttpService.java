@@ -119,7 +119,7 @@ public class HttpService {
         return nearestPlaces;
     }
     
-    public List<Place> getPlacesInsideRadius(GeoCoordinate center, double radius, String type) throws IOException {
+    public List<Place> getPlacesInsideRadius(GeoCoordinate center, String type) throws IOException {
         
         String locationString = center.getLatitude() + "," + center.getLongitude();
         String response = restRequest.getForObject(PLACES_API, String.class, locationString, type, googleApiKey, "");

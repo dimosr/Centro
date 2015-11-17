@@ -53,7 +53,6 @@ public class ApiController {
         JsonNode requestTree = jsonMapper.readTree(input);
         double latitude = requestTree.findValue("latitude").asDouble();
         double longitude = requestTree.findValue("longitude").asDouble();
-        double radius = requestTree.findValue("radius").asDouble();
         String type;
         if(requestTree.findValue("type") != null) {
             type = requestTree.findValue("type").asText();
@@ -61,7 +60,7 @@ public class ApiController {
         else
             type = "";
         
-        List<Place> places = httpService.getPlacesInsideRadius(new GeoCoordinate(latitude, longitude), radius, type);
+        List<Place> places = httpService.getPlacesInsideRadius(new GeoCoordinate(latitude, longitude), type);
         
         Iterator<JsonNode> placesNodes = requestTree.get("startingPoints").elements();
         List<GeoCoordinate> startingPoints = new ArrayList();
