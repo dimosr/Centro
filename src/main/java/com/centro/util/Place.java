@@ -1,5 +1,6 @@
 package com.centro.util;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Place {
@@ -14,6 +15,7 @@ public class Place {
         this.googleID = googleID;
         this.location = location;
         this.name = name;
+        this.secondsToReach = new ArrayList();
     }
     
     public GeoCoordinate getLocation() {
@@ -42,5 +44,9 @@ public class Place {
     
     public List<Long> getSecondsToReach() {
         return this.secondsToReach;
+    }
+    
+    public void addSecondToReach(Long time) {
+        secondsToReach.add(time);
     }
 }

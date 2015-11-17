@@ -10,7 +10,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
@@ -106,10 +105,16 @@ public class HttpService {
     }
     
     public List<Place> keepNearestPlaces(List<Place> unfilteredPlaces, List<GeoCoordinate> origins, List<String> modes, int topSize) throws IOException {
-        for(int i = 0; i < unfilteredPlaces.size(); i++) {
-            Place place = unfilteredPlaces.get(i);
-            List<Long> distancesInSeconds = distanceInSecondsByMode(place.getLocation(), origins, TransportationMode.CAR);
-            place.setSecondsToReach(distancesInSeconds);
+        List<GeoCoordinate> placesCoords = new ArrayList();
+        for(Place place : unfilteredPlaces)
+            placesCoords.add(place.getLocation());
+        
+        for(int i = 0; i < origins.size(); i++) {
+            //TransportationMode mode = TransportationMode.valueOf(modes.get(i));
+            GeoCoordinate startingPoint = origins.get(i);
+            List<Long> distancesInSeconds = distanceInSecondsByMode(startingPoint, placesCoords, TransportationMode.CAR);
+            for(int j = 0; j < distancesInSeconds.size(); j++)
+                unfilteredPlaces.get(j).addSecondToReach(distancesInSeconds.get(j));
         }
         sortByTimeSum(unfilteredPlaces);
         
