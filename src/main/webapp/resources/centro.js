@@ -152,9 +152,6 @@ function addPOI() {
 		});
 	}
 	
-	
-	res.radius = 5000;
-	
 	if (pType == "") {
 		return true;
 	}
