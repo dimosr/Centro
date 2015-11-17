@@ -110,9 +110,9 @@ public class HttpService {
             placesCoords.add(place.getLocation());
         
         for(int i = 0; i < origins.size(); i++) {
-            //TransportationMode mode = TransportationMode.valueOf(modes.get(i));
+            TransportationMode mode = TransportationMode.findByMapsFormat(modes.get(i));
             GeoCoordinate startingPoint = origins.get(i);
-            List<Long> distancesInSeconds = distanceInSecondsByMode(startingPoint, placesCoords, TransportationMode.CAR);
+            List<Long> distancesInSeconds = distanceInSecondsByMode(startingPoint, placesCoords, mode);
             for(int j = 0; j < distancesInSeconds.size(); j++)
                 unfilteredPlaces.get(j).addSecondToReach(distancesInSeconds.get(j));
         }

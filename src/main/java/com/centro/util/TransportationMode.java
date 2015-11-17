@@ -13,6 +13,14 @@ public enum TransportationMode {
         this.frontEndName = frontEndName;
     }
     
+    public static TransportationMode findByMapsFormat(String modeName) {
+        for(TransportationMode mode : values()) {
+            if(mode.getMapsFormat().equals(modeName))
+                return mode;
+        }
+        return null;
+    }
+    
     public String getMapsFormat() {
         return mapsFormat;
     }
