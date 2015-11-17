@@ -232,6 +232,7 @@ p {
 	display: inline-block;
 	max-width: 70px;
 	min-height: 70px;
+	float: left;
 }
 
 .info-window {
