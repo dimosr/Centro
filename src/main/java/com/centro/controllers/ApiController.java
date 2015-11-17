@@ -9,6 +9,8 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -60,7 +62,21 @@ public class ApiController {
             type = "";
         
         List<Place> places = httpService.getPlacesInsideRadius(new GeoCoordinate(latitude, longitude), radius, type);
-        List<Place> nearestPlaces = httpService.keepNearestPlaces(places, new GeoCoordinate(latitude, longitude), 10);
+        
+        Iterator<JsonNode> placesNodes = requestTree.get("startingPoints").elements();
+        List<GeoCoordinate> startingPoints = new ArrayList();
+        List<String> preferredModes = new ArrayList();
+        while(placesNodes.hasNext()) {
+            JsonNode placeNode = placesNodes.next();
+            latitude = placeNode.findValue("latitude").asDouble();
+            longitude = placeNode.findValue("longitude").asDouble();
+            String mode = placeNode.findValue("mode").asText();
+            
+            startingPoints.add(new GeoCoordinate(latitude, longitude));
+            preferredModes.add(mode);
+        }
+        
+        List<Place> nearestPlaces = httpService.keepNearestPlaces(places, startingPoints, preferredModes, 10);
         String output = jsonMapper.writeValueAsString(nearestPlaces);
         return output;
     }

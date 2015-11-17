@@ -105,9 +105,10 @@ public class HttpService {
         return distanceInSecondsByMode(from, to, TransportationMode.CAR);
     }
     
-    public List<Place> keepNearestPlaces(List<Place> unfilteredPlaces, GeoCoordinate center, int topSize) throws IOException {
-        for(Place place : unfilteredPlaces) {
-            List<Long> distancesInSeconds = distanceInSeconds(center, Arrays.asList(place.getLocation()));
+    public List<Place> keepNearestPlaces(List<Place> unfilteredPlaces, List<GeoCoordinate> origins, List<String> modes, int topSize) throws IOException {
+        for(int i = 0; i < unfilteredPlaces.size(); i++) {
+            Place place = unfilteredPlaces.get(i);
+            List<Long> distancesInSeconds = distanceInSecondsByMode(place.getLocation(), origins, TransportationMode.CAR);
             place.setSecondsToReach(distancesInSeconds);
         }
         sortByTimeSum(unfilteredPlaces);

@@ -53,7 +53,8 @@ public class ApiControllerTest {
         GeoCoordinate inputCoord = new GeoCoordinate(51.53128283381906, -0.15418765192555384);
         double radius = 5000;
         PlaceType placeType = PlaceType.NIGHT_CLUB;
-        String query = "{\"latitude\": " + inputCoord.getLatitude() + ", \"longitude\":" + inputCoord.getLongitude() + ", \"radius\": " + radius + ", \"type\": \"" + placeType.getGoogleApiName() + "\"}";
+        String query = "{\"latitude\": " + inputCoord.getLatitude() + ", \"longitude\":" + inputCoord.getLongitude() + ", \"radius\": " + radius + ", \"type\": \"" + placeType.getGoogleApiName() + "\"," + 
+                        "\"startingPoints\":[{\"latitude\": 51.5335578, \"longitude\": -0.15315775, \"mode\": \"" + HttpService.DEFAULT_MODE.getMapsFormat() + "\"}]}";
         
         Place place1 = new Place("googleID1", new GeoCoordinate(51.4977507, -0.0994656), "club1");
         PlaceInfo info1 = new PlaceInfo(Arrays.asList("www.image1.com", "www.image2.com"), "4.2", "http://club1.com");
@@ -64,7 +65,7 @@ public class ApiControllerTest {
         List<Place> places = Arrays.asList(place1, place2);
         List<Place> sortedPlaces = Arrays.asList(place2, place1);
         when(service.getPlacesInsideRadius(any(GeoCoordinate.class), any(Integer.class), any(String.class))).thenReturn(places);
-        when(service.keepNearestPlaces(any(List.class), any(GeoCoordinate.class), any(Integer.class))).thenReturn(sortedPlaces);
+        when(service.keepNearestPlaces(any(List.class), any(List.class), any(List.class),any(Integer.class))).thenReturn(sortedPlaces);
         
         ObjectMapper jsonMapper = new ObjectMapper();
         String expectedResponse = jsonMapper.writeValueAsString(sortedPlaces);
