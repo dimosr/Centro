@@ -10,24 +10,27 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import static org.junit.Assert.assertEquals;
-import org.junit.BeforeClass;
 import org.junit.Test;
-import static org.mockito.Mockito.mock;
+import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
+import static org.mockito.Matchers.any;
+import org.mockito.Mock;
 import static org.mockito.Mockito.when;
+import org.mockito.Spy;
+import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.web.client.RestTemplate;
 
-
+@RunWith(MockitoJUnitRunner.class)
 public class HttpServiceTest {
     
+    @Spy
+    @InjectMocks
     private static HttpService service;
-    private static RestTemplate restRequest;
-    private static final double DELTA = 1e-15;
     
-    @BeforeClass
-    public static void setUpDependencies() {
-        restRequest = mock(RestTemplate.class);
-        service = new HttpService(restRequest);
-    }
+    @Mock
+    private static RestTemplate restRequest;
+    
+    private static final double DELTA = 1e-15;
     
     @Test
     public void getPlaceGeocodeTest() throws IOException {
@@ -105,5 +108,25 @@ public class HttpServiceTest {
         
         service.sortByTimeSum(initialPlaceList);
         assertEquals(expectedSortedList, initialPlaceList);
+    }
+    
+    public void keepNearestPlaces() throws IOException {
+        GeoCoordinate startingPoint1 = new GeoCoordinate(56.02, 0.094);
+        GeoCoordinate startingPoint2 = new GeoCoordinate(51.54, -0.744);
+        Place place1 = new Place("googleID1", new GeoCoordinate(45.34, -0.1234), "cafe1");
+        Place place2 = new Place("googleID2", new GeoCoordinate(54.45, -0.2345), "cafe2");
+        Place place3 = new Place("googleID3", new GeoCoordinate(48.93, -0.9911), "cafe3");
+        
+        List<Place> initialPlaceList = Arrays.asList(place1, place2, place3);
+        List<Place> top2List = Arrays.asList(place3, place1);
+        
+        when(service.distanceInSecondsByMode(place1.getLocation(), Arrays.asList(startingPoint1, startingPoint2), any(TransportationMode.class))).thenReturn(Arrays.asList(new Long(233), new Long(344)));     //total cost: 577
+        when(service.distanceInSecondsByMode(place2.getLocation(), Arrays.asList(startingPoint1, startingPoint2), any(TransportationMode.class))).thenReturn(Arrays.asList(new Long(278), new Long(324)));     //total cost: 602
+        when(service.distanceInSecondsByMode(place2.getLocation(), Arrays.asList(startingPoint1, startingPoint2), any(TransportationMode.class))).thenReturn(Arrays.asList(new Long(221), new Long(352)));     //total cost: 573
+        
+        
+        
+        assertEquals(top2List, service.keepNearestPlaces(initialPlaceList, Arrays.asList(startingPoint1, startingPoint2), Arrays.asList(TransportationMode.CAR.getMapsFormat(), TransportationMode.CAR.getMapsFormat()), 2));
+        
     }
 }
