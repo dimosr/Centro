@@ -239,7 +239,7 @@ function addPOI() {
 	            	}	            	
             	}
             	
-            	html += '<div style="text-align: right;"><button class="btn btn-success" onclick="newCentro('+place.location.latitude+','+place.location.longitude+')">Make it Centro!</button></div>';
+            	html += '<div style="text-align: right;"><button class="btn btn-success" onclick="newCentro('+place.location.latitude+','+place.location.longitude+')">Go here!</button></div>';
             	html += '</div>';
             	
             	var m = createMarker({lat:place.location.latitude,lng:place.location.longitude}, placeMarkerIcon, html);
@@ -288,9 +288,9 @@ function createMarker(latLng, icon, infoText) {
 }
 
 function newCentro(lat, lng) {
-	resMarker.setPosition({lat:lat,lng:lng});
-	addPOI($('#ResPlaceType').val());
-	addRoutes();
+	//resMarker.setPosition({lat:lat,lng:lng});
+	//addPOI($('#ResPlaceType').val());
+	addRoutes(lat, lng);
 }
 
 function freeze() {
@@ -303,9 +303,17 @@ function unFreeze() {
 	$('input, select, button').removeAttr('disabled');
 }
 
-function addRoutes() {
-	if (typeof(resMarker) == 'null') {
-		return;
+function addRoutes(lat, lng) {
+		
+	if (typeof(lat) == 'undefined' || typeof(lng) == 'undefined') {
+		if (typeof(resMarker) == 'undefined') {
+			// ERROR
+			return;
+		}
+		
+		var resPos = resMarker.getPosition();
+		lat = resPos.lat();
+		lng = resPos.lng();
 	}
 	
 	//Clean
@@ -319,8 +327,7 @@ function addRoutes() {
 	times = [];
 	// ---- End Cleaning
 	
-	var resPos = resMarker.getPosition(),	
-		destString = resPos.lat() + ',' + resPos.lng(),
+	var destString = lat + ',' + lng,
 		$addresses = $('#res-panel .address');
 	
 	for (var i = 0; i < $addresses.length; ++i) {
