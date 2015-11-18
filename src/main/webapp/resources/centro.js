@@ -19,8 +19,8 @@ var $address = $('#address-input'),
 	$resAddressContainer = $('#res-address-container'),
 	$firstDescContainer = $('#first-desc'),
 	$sndDescContainer = $('#snd-desc'),
-	bounds = new google.maps.LatLngBounds(),
 	directions = [],
+	times = [],
 	markers = [];
 
 $('#address-form').on('submit', function(e){
@@ -54,12 +54,15 @@ $('#address-form').on('submit', function(e){
     				  var $div = $(this).parent();
     				  
     				  markers[$div.data('marker')].setMap(null);
+    				  markers.splice($div.data('marker'), 1);
     				  $div.remove();
     				  if ($addressContainer.html().trim() == '') {
     					  $sndDescContainer.fadeOut(function() {
     						  $firstDescContainer.fadeIn();
     					  });
     				  }
+    				  
+    				  refreshPOV();
     			  });
     			  
     			  var marker = new google.maps.Marker({
@@ -68,9 +71,7 @@ $('#address-form').on('submit', function(e){
     			  });
     			  
     			  markers.push(marker);
-    			  
-    			  bounds.extend(marker.position);
-    			  map.fitBounds(bounds);
+    			  refreshPOV();
     			  
     			  $address.val(''); 
     		  } else {
@@ -95,6 +96,14 @@ $('#ResPlaceType').on('change', function(){
 // Util --------------
 var currentInfoWindow = null,
 	resPanelOpened = false;
+
+function refreshPOV() {
+	var bounds = new google.maps.LatLngBounds();
+	for (var i = 0; i < markers.length; ++i) {
+		bounds.extend(markers[i].position);
+	}
+	map.fitBounds(bounds);
+}
 
 function calcCentralPoint() {
     var json = [];
@@ -150,7 +159,6 @@ function calcCentralPoint() {
 	            $('#res-panel').animate({left: '0px'}, 'slow');
             }
             
-            map.fitBounds(bounds);
             addRoutes();
 		}
     });
@@ -302,14 +310,16 @@ function addRoutes() {
 	//Clean
 	for (var k = 0; k < directions.length; ++k) {
 		directions[k].setMap(null);
+		times[k].setMap(null);
 	}
 	
 	directions = [];
+	times = [];
 	// ---- End Cleaning
 	
 	var resPos = resMarker.getPosition(),	
 		destString = resPos.lat() + ',' + resPos.lng(),
-		$addresses = $('.address');
+		$addresses = $('#res-panel .address');
 	
 	for (var i = 0; i < $addresses.length; ++i) {
 		 var directionsService = new google.maps.DirectionsService(),
@@ -327,16 +337,23 @@ function addRoutes() {
 			 if (status == google.maps.DirectionsStatus.OK) {
 				 //directionsDisplay.setDirections(response);
 				 var path = response.routes[0].overview_path,
+				 	 timePosition = {lat: path[Math.floor((path.length - 1)/2)].lat(), lng: path[Math.floor((path.length - 1)/2)].lng()},
 				 	 direction = new google.maps.Polyline({
 					    path: path,
 					    geodesic: true,
 					    strokeColor: '#FF0000',
 					    strokeOpacity: 1.0,
-					    strokeWeight: 2
+					    strokeWeight: 2,
+					    map: map
+					  }),
+					  time = new google.maps.InfoWindow({
+							content: response.routes[0].legs[0].duration.text,
+							position: timePosition,
+							map: map
 					  });
 
-					  direction.setMap(map);
-					  directions.push(direction);
+				  directions.push(direction);
+				  times.push(time);
 			 }
 			 else {
 				 //Error has occured
