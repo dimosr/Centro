@@ -151,6 +151,7 @@ function calcCentralPoint() {
 	            	var $this = $(this);
 	            	$this.parent().data('mean', $this.val());
 	            	addRoutes();
+	            	addPOI();
 	            });
 	            
 	            //end copying/cleaning
@@ -300,11 +301,17 @@ function newCentro(lat, lng) {
 function freeze() {
 	$('#loader').show();
 	$('input, select, button').attr('disabled', 'disabled');
+	if (resMarker) {
+		resMarker.setDraggable(false);
+	}
 }
 
 function unFreeze() {
 	$('#loader').hide();
 	$('input, select, button').removeAttr('disabled');
+	if (resMarker) {
+		resMarker.setDraggable(true);
+	}
 }
 
 function addRoutes(lat, lng) {
