@@ -19,6 +19,7 @@
 	
 	<!-- Centro theme -->
 	<link rel="stylesheet" href="<c:url value='/resources/centro.css'/>">
+        <script src="<c:url value='/resources/analytics/ga.js'/>"></script>
 </head>
 <body>
 	<!-- Map Container -->
@@ -99,6 +100,5 @@
 		var placeMarkerIcon = "<c:url value='/img/placeMarker.png'/>";
 		var starsImg = "<c:url value='/img/stars.png'/>";
 	</script>
-        <script src="<c:url value='/resources/analytics/ga.js'/>"></script>
 </body>
 </html>
