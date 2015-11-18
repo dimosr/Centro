@@ -134,10 +134,12 @@ function calcCentralPoint() {
                 google.maps.event.addListener(resMarker, 'dragend', function() {
                 	addPOI($('#ResPlaceType').val());
                 	addRoutes();
+                	updateResAddress();
                 });
             }
             
-            $('.res-detail').html('Lat: ' + res.latitude + ', Lng: ' + res.longitude);
+            // QUICK FIX
+            updateResAddress();
             
             if (!resPanelOpened) {
 	            // Copy starting points into 
@@ -156,7 +158,9 @@ function calcCentralPoint() {
 	            $('.grey-bkg').animate({opacity: 0}, 'fast', function() {
 	            	$('.grey-bkg').remove();
 	            });
-	            $('#map').animate({left: '400px'}, 'slow');
+	            $('#map').animate({left: '400px'}, 'slow', function() {
+	            	refreshPOV();
+	            });
 	            $('#res-panel').animate({left: '0px'}, 'slow');
             }
             
@@ -353,7 +357,7 @@ function addRoutes(lat, lng) {
 					    map: map
 					  }),
 					  time = new google.maps.InfoWindow({
-							content: response.routes[0].legs[0].duration.text + '-' + response.routes[0].legs[0].distance.text
+							content: response.routes[0].legs[0].duration.text + ' - ' + response.routes[0].legs[0].distance.text
 									 + '<br /><span class="direction-detail-link" onclick="showDirectionDetails(\'' + directionsDetails.length + '\')">More details...</span>',
 							position: timePosition,
 							map: map
@@ -376,3 +380,22 @@ function showDirectionDetails(index) {
 	directionsDetails[index].setPanel(document.getElementById('direction-detail'));
 	$('#directionModal').modal();
 }
+
+//QUICK FIX ---- NEED TO BE PUT IN BACK END
+function updateResAddress() {
+	var resPos = resMarker.getPosition(),
+	  lat = resPos.lat(),
+	  lng = resPos.lng();
+	
+	$.ajax({
+		  url: 'https://maps.googleapis.com/maps/api/geocode/json?address=' + lat + ',' + lng,
+		  success: function(obj){	  
+			  if (obj.status == 'OK') {
+				  $('.res-detail').html(obj.results[0].formatted_address);
+			  } else {
+				  $('.res-detail').html('Lat: ' + lat + ', Lng: ' + lng);
+			  }
+		  }
+	});
+}
+// ------ END QUICK FIX --------------------

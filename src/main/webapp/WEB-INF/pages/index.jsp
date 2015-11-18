@@ -33,19 +33,22 @@
 				It's easy, start by typing your address:
 			</p>
 			<p id="snd-desc">
-				You can add more addresses, when you're done click <button class="btn btn-default" id="submit">I'm done!</button>
+				You can add more addresses, when you're done click "Go!"<br />
 			</p>
 		</div>
 		
-		<form id="address-form">
-			<div class="form-group">
-				<div id="home-addon"><span class="glyphicon glyphicon-home" aria-hidden="true"></span></div>
-				<input type="text" class="form-control" placeholder="My address" id="address-input"><!--
-			 --><button class="btn btn-success" type="submit" id="add-button"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></button>
-			 </div>
-		</form>
-		
-		<div id="address-container"></div>
+		<div style="padding: 0px 25px;">
+			<form id="address-form">
+				<div class="form-group">
+					<div id="home-addon"><span class="glyphicon glyphicon-map-marker" aria-hidden="true"></span></div>
+					<input type="text" class="form-control" placeholder="My address" id="address-input"><!--
+				 --><button class="btn btn-success" type="submit" id="add-button"><span class="glyphicon glyphicon-search" aria-hidden="true"></span></button>
+				 </div>
+			</form>
+			
+			<div id="address-container"></div>
+			<button class="btn btn-default" id="submit">Go!</button>
+		</div>
 	</div>
 	
 	<div id="loader" style="display:none;">

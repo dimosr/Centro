@@ -71,7 +71,7 @@ p {
 
 .logo-container img {
 	display: inline-block;
-	max-width: 70%;
+	max-height: 400px;
 }
 
 @media screen and (max-width: 992px) {
@@ -92,8 +92,6 @@ p {
 }
 
 #address-form .form-group {
-	width: 80%;
-	margin: 20px auto;
 	position: relative;
 }
 
@@ -123,7 +121,7 @@ p {
 	color: white;
 	border-radius: 5px;
 	position: relative;
-	margin: 10px;
+	margin: 10px 0px;
 }
 
 .address .delete {
@@ -136,6 +134,10 @@ p {
 
 #snd-desc {
 	display: none;
+}
+
+#submit {
+	float: right;
 }
 
 /*
