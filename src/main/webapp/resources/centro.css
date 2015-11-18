@@ -264,3 +264,12 @@ p {
 .info-window {
 	min-width: 150px;
 }
+
+/*
+ * Directions
+ */
+ 
+.direction-detail-link:hover {
+	cursor: pointer;
+	text-decoration: underline;
+}

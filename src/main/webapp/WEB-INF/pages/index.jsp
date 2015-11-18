@@ -90,7 +90,20 @@
                 <option value="<c:out value="${transportationMode.getMapsFormat()}"/>"><c:out value="${transportationMode.getFrontEndName()}"/></option>
             </c:forEach>
         </select>
-	</div>	
+	</div>
+	
+	<div class="modal fade" id="directionModal" tabindex="-1" role="dialog" aria-labelledby="directionModalLabel">
+	  <div class="modal-dialog" role="document">
+	    <div class="modal-content">
+	      <div class="modal-body" id="direction-detail">
+	      </div>
+	      <div class="modal-footer">
+	        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+	      </div>
+	    </div>
+	  </div>
+	</div>
+	
 	<script src="<c:url value='/resources/jquery/jquery.min.js'/>"></script>
 	<script src="<c:url value='/resources/bootstrap/js/bootstrap.min.js'/>"></script>
 	<script src="https://maps.googleapis.com/maps/api/js?v=3.exp"></script>

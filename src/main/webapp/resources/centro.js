@@ -20,6 +20,7 @@ var $address = $('#address-input'),
 	$firstDescContainer = $('#first-desc'),
 	$sndDescContainer = $('#snd-desc'),
 	directions = [],
+	directionsDetails = [],
 	times = [],
 	markers = [];
 
@@ -314,6 +315,7 @@ function addRoutes() {
 	}
 	
 	directions = [];
+	directionsDetails = [];
 	times = [];
 	// ---- End Cleaning
 	
@@ -323,7 +325,6 @@ function addRoutes() {
 	
 	for (var i = 0; i < $addresses.length; ++i) {
 		 var directionsService = new google.maps.DirectionsService(),
-		 	 //directionsDisplay = new google.maps.DirectionsRenderer(),
 		 	 directionsRequest = {
 				 origin: $($addresses[i]).data('lat') + ',' + $($addresses[i]).data('lng'),
 				 destination: destString,
@@ -331,12 +332,10 @@ function addRoutes() {
 				 unitSystem: google.maps.UnitSystem.METRIC
 		 	};
 		 
-		 //directionsDisplay.setMap(map);
-		 
 		 directionsService.route(directionsRequest, function (response, status) {
 			 if (status == google.maps.DirectionsStatus.OK) {
-				 //directionsDisplay.setDirections(response);
-				 var path = response.routes[0].overview_path,
+				 var directionsDisplay = new google.maps.DirectionsRenderer(),
+				 	 path = response.routes[0].overview_path,
 				 	 timePosition = {lat: path[Math.floor((path.length - 1)/2)].lat(), lng: path[Math.floor((path.length - 1)/2)].lng()},
 				 	 direction = new google.maps.Polyline({
 					    path: path,
@@ -347,17 +346,26 @@ function addRoutes() {
 					    map: map
 					  }),
 					  time = new google.maps.InfoWindow({
-							content: response.routes[0].legs[0].duration.text,
+							content: response.routes[0].legs[0].duration.text + '-' + response.routes[0].legs[0].distance.text
+									 + '<br /><span class="direction-detail-link" onclick="showDirectionDetails(\'' + directionsDetails.length + '\')">More details...</span>',
 							position: timePosition,
 							map: map
 					  });
-
+				 
+				  directionsDisplay.setDirections(response);
+				  
 				  directions.push(direction);
 				  times.push(time);
+				  directionsDetails.push(directionsDisplay);
 			 }
 			 else {
 				 //Error has occured
 			 }
 		 });
 	}
+}
+
+function showDirectionDetails(index) {
+	directionsDetails[index].setPanel(document.getElementById('direction-detail'));
+	$('#directionModal').modal();
 }
