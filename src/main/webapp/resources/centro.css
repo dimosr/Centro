@@ -217,6 +217,11 @@ p {
 	margin-top: 10px;
 }
 
+.filter-content {
+    border: 1px solid white;
+    padding: 10px;
+}
+
 /*
  * POI
  */
