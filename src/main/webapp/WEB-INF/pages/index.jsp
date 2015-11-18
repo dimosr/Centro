@@ -3,7 +3,7 @@
 <%@ page import="com.centro.util.PlaceType" %>
 <%@ page import="com.centro.util.TransportationMode" %>
 <%  pageContext.setAttribute("placeTypes", PlaceType.values()); %>
-<%  pageContext.setAttribute("transportationModes", TransportationMode.values()); %> 
+<%  pageContext.setAttribute("transportationModes", TransportationMode.values()); %>
 <html>
 <head>
 	<meta charset="utf-8">
@@ -99,5 +99,6 @@
 		var placeMarkerIcon = "<c:url value='/img/placeMarker.png'/>";
 		var starsImg = "<c:url value='/img/stars.png'/>";
 	</script>
+        <script src="<c:url value='/resources/analytics/ga.js'/>"></script>
 </body>
 </html>

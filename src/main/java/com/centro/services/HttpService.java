@@ -34,7 +34,7 @@ public class HttpService {
     
     @Value("${google.place.api.key}")
     public String googleApiKey;
-    
+
     
     public static final TransportationMode DEFAULT_MODE = TransportationMode.CAR;
     
