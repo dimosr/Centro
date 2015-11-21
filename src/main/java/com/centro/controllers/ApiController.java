@@ -15,6 +15,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -99,5 +101,27 @@ public class ApiController {
             output = jsonMapper.writeValueAsString(searchedQuery);
         }
         return output;
+    }
+    
+    @RequestMapping(value = "/api/query/store", method = RequestMethod.POST, produces="application/json", consumes="application/json") 
+    public ResponseEntity<String> generateQueryToken(@RequestBody String input) throws IOException {
+        ObjectMapper jsonMapper = new ObjectMapper();
+        
+        JsonNode requestTree = jsonMapper.readTree(input);
+        String startingPoints = requestTree.findValue("startingPoints").asText();
+        String modes = requestTree.findValue("modes").asText();
+        String meetingType = requestTree.findValue("meetingType").asText();
+        
+        CentroQuery query = new CentroQuery(startingPoints, modes, meetingType);
+        
+        String output = "";
+        try {
+            int id = queryDao.insert(query);
+            output = "{ \"id\":" + id + "}";
+            return new ResponseEntity<String>(output, HttpStatus.OK);
+        }
+        catch(IllegalArgumentException e) {
+            return new ResponseEntity<String>(HttpStatus.BAD_REQUEST);
+        }
     }
 }

@@ -22,15 +22,14 @@ public class JdbcCentroQueryDao implements CentroQueryDao {
     public int insert(CentroQuery centroQuery) {
         int queryID = 0;
         String sql = "INSERT INTO centro_query" +
-                      "(starting_points, modes, meeting_type) VALUES ";
+                      "(starting_points, modes, meeting_type) VALUES (?, ?, ?)";
         Connection connection = null;
         
         try {
             connection = dataSource.getConnection();
             PreparedStatement prepStmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
-            prepStmt.setInt(1, centroQuery.getId());
-            prepStmt.setString(2, centroQuery.getStartingPoints());
-            prepStmt.setString(3, centroQuery.modes());
+            prepStmt.setString(1, centroQuery.getStartingPoints());
+            prepStmt.setString(2, centroQuery.modes());
             prepStmt.setString(3, centroQuery.getMeetingType());
             prepStmt.executeUpdate();
             
@@ -43,13 +42,15 @@ public class JdbcCentroQueryDao implements CentroQueryDao {
             return queryID;
         }
         catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new IllegalArgumentException();
         }
         finally {
             if (connection != null) {
 		try {
                     connection.close();
-		} catch (SQLException e) {}
+		} catch (SQLException e) {
+                    throw new IllegalArgumentException();
+                }
             }
         }
     }
@@ -85,7 +86,9 @@ public class JdbcCentroQueryDao implements CentroQueryDao {
             if (connection != null) {
 		try {
                     connection.close();
-		} catch (SQLException e) {}
+		} catch (SQLException e) {
+                    throw new IllegalArgumentException();
+                }
             }
         }
     }

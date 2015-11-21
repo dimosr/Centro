@@ -24,7 +24,11 @@ public class CentroQuery {
     }
     
     public CentroQuery(int id, String startingPoints, String modes, String meetingType) {
+        this(startingPoints, modes, meetingType);
         this.id = id;
+    }
+    
+    public CentroQuery(String startingPoints, String modes, String meetingType) {
         this.startingPoints = startingPoints;
         this.modes = modes;
         this.meetingType = meetingType;
