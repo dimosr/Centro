@@ -23,7 +23,7 @@ var $address = $('#address-input'),
 	directionsDetails = [],
 	times = [],
 	markers = [];
-
+        
 $('#address-form').on('submit', function(e){
       e.preventDefault();
       
@@ -68,7 +68,8 @@ $('#address-form').on('submit', function(e){
     			  
     			  var marker = new google.maps.Marker({
     				  map: map,
-    				  position: {lat:lat,lng:lng}
+    				  position: {lat:lat,lng:lng},
+                                  icon: '/img/small_pin.png'
     			  });
     			  
     			  markers.push(marker);
@@ -358,9 +359,9 @@ function addRoutes(lat, lng) {
 				 	 direction = new google.maps.Polyline({
 					    path: path,
 					    geodesic: true,
-					    strokeColor: '#FF0000',
+					    strokeColor: '#8C8C8C',
 					    strokeOpacity: 1.0,
-					    strokeWeight: 2,
+					    strokeWeight: 4,
 					    map: map
 					  }),
 					  time = new google.maps.InfoWindow({
