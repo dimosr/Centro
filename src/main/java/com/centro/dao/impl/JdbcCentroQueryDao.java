@@ -1,5 +1,6 @@
 package com.centro.dao.impl;
 
+import com.centro.dao.CentroQueryDao;
 import com.centro.model.CentroQuery;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -9,7 +10,7 @@ import java.sql.Statement;
 import javax.sql.DataSource;
 
 
-public class JdbcCentroQueryDao {
+public class JdbcCentroQueryDao implements CentroQueryDao {
     
     private DataSource dataSource;
     
@@ -17,10 +18,11 @@ public class JdbcCentroQueryDao {
 	this.dataSource = dataSource;
     }
     
+    @Override
     public int insert(CentroQuery centroQuery) {
         int queryID = 0;
         String sql = "INSERT INTO centro_query" +
-                      "(id, starting_points, modes, meeting_type) VALUES ";
+                      "(starting_points, modes, meeting_type) VALUES ";
         Connection connection = null;
         
         try {
@@ -52,6 +54,7 @@ public class JdbcCentroQueryDao {
         }
     }
     
+    @Override
     public CentroQuery findById(int id) {
         String sql = "SELECT * FROM centro_query WHERE id = ?";
         Connection connection = null;

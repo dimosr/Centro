@@ -4,6 +4,6 @@ import com.centro.model.CentroQuery;
 
 
 public interface CentroQueryDao {
-    public void insert(CentroQuery centroQuery);
+    public int insert(CentroQuery centroQuery);
     public CentroQuery findById(int id);
 }

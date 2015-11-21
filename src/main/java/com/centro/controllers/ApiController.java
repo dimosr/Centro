@@ -1,5 +1,7 @@
 package com.centro.controllers;
 
+import com.centro.dao.CentroQueryDao;
+import com.centro.model.CentroQuery;
 import com.centro.services.HttpService;
 import com.centro.util.GeoCoordinate;
 import com.centro.util.Place;
@@ -17,6 +19,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
@@ -30,6 +33,9 @@ public class ApiController {
     
     @Autowired
     private MeetingPointCalculator calculator;
+    
+    @Autowired
+    private CentroQueryDao queryDao;
     
     @RequestMapping(value = "/api", method = RequestMethod.GET, produces="application/json")
     public @ResponseBody String index() {
@@ -78,6 +84,20 @@ public class ApiController {
         
         List<Place> nearestPlaces = httpService.keepNearestPlaces(places, startingPoints, preferredModes, TOP_PLACES);
         String output = jsonMapper.writeValueAsString(nearestPlaces);
+        return output;
+    }
+    
+    @RequestMapping(value = "/api/query/get", method = RequestMethod.GET, produces="application/json", params={"id"}) 
+    public @ResponseBody String getQuery(@RequestParam(value="id") int id) throws JsonProcessingException{
+        CentroQuery searchedQuery = queryDao.findById(id);
+        
+        String output;
+        if(searchedQuery == null)
+            output = "{}";
+        else {
+            ObjectMapper jsonMapper = new ObjectMapper();
+            output = jsonMapper.writeValueAsString(searchedQuery);
+        }
         return output;
     }
 }
