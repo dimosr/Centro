@@ -29,11 +29,11 @@
 		<div class="logo-container">
 			<img src="<c:url value='/img/logo.png'/>" />
 			<p id="first-desc">
-				Centro helps you find the best meeting point for you and your friends.<br />
-				It's easy, start by typing your address:
+				Centro helps you to find the middle point between different locations. 
+				It's easy, start by typing your address.
 			</p>
 			<p id="snd-desc">
-				You can add more addresses, when you're done click "Go!"<br />
+				Now add the remaining addresses, when you're done click "Go". <br />
 			</p>
 		</div>
 		
@@ -41,7 +41,7 @@
 			<form id="address-form">
 				<div class="form-group">
 					<div id="home-addon"><span class="glyphicon glyphicon-map-marker" aria-hidden="true"></span></div>
-					<input type="text" class="form-control" placeholder="My address" id="address-input"><!--
+					<input type="text" class="form-control" placeholder="Type your address.." id="address-input"><!--
 				 --><button class="btn btn-success" type="submit" id="add-button"><span class="glyphicon glyphicon-search" aria-hidden="true"></span></button>
 				 </div>
 			</form>
@@ -57,14 +57,14 @@
 
 	<div id="res-panel">
 		<img src="<c:url value='/img/logo.png'/>" class="logo" />
-		<h1>Result</h1>
+		<h1>Middle point:</h1>
 		<div class="res-detail">
 		</div>
 		
 		<!--h1>Filters</h1-->
 		<ul class="nav nav-tabs nav-justified filter-pills" role="tablist">
 		    <li role="presentation" class="active"><a href="#dest-pane" aria-controls="dest-pane" role="tab" data-toggle="tab">Destination</a></li>
-		    <li role="presentation"><a href="#start-pane" aria-controls="start-pane" role="tab" data-toggle="tab">Starting points</a></li>
+		    <li role="presentation"><a href="#start-pane" aria-controls="start-pane" role="tab" data-toggle="tab">Starting Points</a></li>
 		</ul>
 
 	  	<div class="tab-content filter-content">
