@@ -93,23 +93,31 @@ p {
 	margin-bottom: 25px;
 }
 
-#address-form .form-group {
+#address-form .form-group, 
+#res-address-form .form-group
+{
 	position: relative;
 }
 
-#home-addon {
+#home-addon,
+#res-home-addon
+{
 	position: absolute;
 	top: 0.55em;
 	left: 0.5em;
 }
 
-#address-input {
+#address-input,
+#res-address-input
+{
 	padding-left: 2em;
 	display: inline-block;
 	padding-right: 45px;
 }
 
-#add-button {
+#add-button,
+#res-add-button
+{
 	position:absolute;
 	top: 0;
 	right: 0;
@@ -192,7 +200,7 @@ p {
 	width: 35%;
 	position: absolute;
 	right: 5px;
-	top: 25%;
+	top: 40%;
 }
 
 /*

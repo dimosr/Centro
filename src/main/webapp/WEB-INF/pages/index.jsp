@@ -82,7 +82,16 @@
                     </div>
                     <div role="tabpanel" class="tab-pane fade" id="start-pane">
                             <h2>Addresses</h2>
-                            <div id="res-address-container"></div>
+                             <form id="res-address-form">
+				<div class="form-group">
+					<div id="res-home-addon"><span class="glyphicon glyphicon-map-marker" aria-hidden="true"></span></div>
+					<input type="text" class="form-control" placeholder="Add more address.." id="res-address-input"><!--
+				 --><button class="btn btn-success" type="submit" id="res-add-button"><span class="glyphicon glyphicon-search" aria-hidden="true"></span></button>
+				 </div>
+			  </form>
+                            <div id="res-address-container"> </div>
+                             <button class="btn btn-default" id="re-submit">Recalculate midpoint!</button>
+                            
                     </div>
 		</div>
 	</div>

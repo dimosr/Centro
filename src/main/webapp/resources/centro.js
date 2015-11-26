@@ -14,8 +14,7 @@ var geocoder = new google.maps.Geocoder();
 
 /* Address addition */
 
-var $address = $('#address-input'),
-	$addressContainer = $('#address-container'),
+var     $addressContainer = $('#address-container'),
 	$resAddressContainer = $('#res-address-container'),
 	$firstDescContainer = $('#first-desc'),
 	$sndDescContainer = $('#snd-desc'),
@@ -24,10 +23,18 @@ var $address = $('#address-input'),
 	times = [],
 	markers = [];
         
-$('#address-form').on('submit', function(e){
+$('#address-form, #res-address-form').on('submit', function(e){
       e.preventDefault();
       
-      var address = $address.val(),
+      var $address = $('#address-input'),
+          $container = $addressContainer;
+      
+      if (resPanelOpened) {
+            $container = $resAddressContainer;
+            $address = $('#res-address-input');
+        }
+      
+        var address = $address.val(),
       	  url = 'https://maps.googleapis.com/maps/api/geocode/json?address=' + encodeURIComponent(address);
       
       freeze();
@@ -41,11 +48,24 @@ $('#address-form').on('submit', function(e){
     			  var results = obj.results[0],
     			  	  lat = results.geometry.location.lat,
     			  	  lng = results.geometry.location.lng;
-    			  
-    			  $addressContainer.append('<div class="address" data-lat="'+lat+'" data-lng="'+lng+'" data-mean="driving" data-marker="'+markers.length+'">'
+    			                     
+    			  $container.append('<div class="address" data-lat="'+lat+'" data-lng="'+lng+'" data-mean="driving" data-marker="'+markers.length+'">'
     					  					+'<div class="delete" aria-label="delete"><span aria-hidden="true">&times;</span></div><span class="text">'
     					  					+results.formatted_address
 					  						+'</span></div>');
+                                                                                
+                          if (resPanelOpened) {
+                            var select = $('#mean-select').html();
+
+                            $container.find('.address').last().append(select);
+                            $container.find('select').last().on('change', function() {
+                                var $this = $(this);
+                                $this.parent().data('mean', $this.val());
+                                addRoutes();
+                                addPOI();
+                               
+                            });
+                          }
     			  
     			  $firstDescContainer.fadeOut(function(){
     				  $sndDescContainer.fadeIn();
@@ -65,6 +85,7 @@ $('#address-form').on('submit', function(e){
     				  
     				  refreshPOV();
     			  });
+                          
     			  
     			  var marker = new google.maps.Marker({
     				  map: map,
@@ -91,9 +112,11 @@ var resMarker = false,
 
 $submit.on('click', calcCentralPoint);
 
-$('#ResPlaceType').on('change', function(){	
-	addPOI();
-});
+$('#re-submit').on('click', calcCentralPoint);
+
+$('#ResPlaceType').on('change',addPOI);
+
+
 
 // Util --------------
 var currentInfoWindow = null,
@@ -143,10 +166,12 @@ function calcCentralPoint() {
             updateResAddress();
             
             if (!resPanelOpened) {
-	            // Copy starting points into 
+	            // Copy starting points into
+                        
 	            var select = $('#mean-select').html();
+                     
 	            $resAddressContainer.html($addressContainer.html());
-	            $resAddressContainer.find('.delete').remove();
+	            //$resAddressContainer.find('.delete').remove();
 	            $resAddressContainer.find('.address').append(select);
 	            $resAddressContainer.find('select').on('change', function() {
 	            	var $this = $(this);
@@ -164,6 +189,8 @@ function calcCentralPoint() {
 	            	refreshPOV();
 	            });
 	            $('#res-panel').animate({left: '0px'}, 'slow');
+                    
+                    resPanelOpened = true;
             }
             
             addRoutes();
