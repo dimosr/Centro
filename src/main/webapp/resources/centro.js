@@ -23,12 +23,11 @@ var     $addressContainer = $('#address-container'),
 	times = [],
 	markers = [];
 
-
 $('#transportation').on('click', function(){
     $("#start-pane-tab").click();
 });
 
-$('#address-form').on('submit', function(e){
+$('#address-form, #res-address-form').on('submit', function(e){
 
       e.preventDefault();
       
