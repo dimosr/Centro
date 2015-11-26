@@ -47,7 +47,7 @@
 			</form>
 			
 			<div id="address-container"></div>
-			<button class="btn btn-default" id="submit">Go!</button>
+			<button class="btn btn-default submit">Go!</button>
 		</div>
 	</div>
 	
@@ -92,13 +92,13 @@
 				 </div>
 			  </form>
                             <div id="res-address-container"> </div>
-                             <button class="btn btn-default" id="re-submit">Recalculate midpoint!</button>
+                             <button class="btn btn-default submit">Recalculate midpoint!</button>
                             
                     </div>
 		</div>
 	</div>
 	<div style="display:none;" id="mean-select">
-		<select class="form-control">
+		<select class="form-control" style="display:none;">
             <c:forEach var="transportationMode" items="${transportationModes}">
                 <option value="<c:out value="${transportationMode.getMapsFormat()}"/>"><c:out value="${transportationMode.getFrontEndName()}"/></option>
             </c:forEach>

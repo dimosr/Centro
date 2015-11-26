@@ -3,29 +3,38 @@
  *
  */
 
+//--------
+// GLOBALS
+//--------
+
+// MAP OBJECTS
 var map = new google.maps.Map(document.getElementById('map'), {
-	zoom: 13,
-	center: {lat: 51.5, lng: -0.17},
-	scrollwheel: true
-});
+		zoom: 13,
+		center: {lat: 51.5, lng: -0.17},
+		scrollwheel: true
+	}),
+	geocoder = new google.maps.Geocoder(),
+	currentInfoWindow = null,
+	resMarker = false;
 
-var currentInfoWindow = null;
-var geocoder = new google.maps.Geocoder();
-
-/* Address addition */
-
-var     $addressContainer = $('#address-container'),
+// DOM OBJECTS
+var $addressContainer = $('#address-container'),
 	$resAddressContainer = $('#res-address-container'),
 	$firstDescContainer = $('#first-desc'),
 	$sndDescContainer = $('#snd-desc'),
-	directions = [],
+	$submit = $('.submit');
+
+// DATAS AND FLAGS
+var directions = [],
 	directionsDetails = [],
 	times = [],
-	markers = [];
+	markers = [],
+	placeMarkers = [],
+	resPanelOpened = false;
 
-$('#transportation').on('click', function(){
-    $("#start-pane-tab").click();
-});
+//-------------
+// MAIN PROCESS
+//-------------
 
 $('#address-form, #res-address-form').on('submit', function(e){
 
@@ -35,11 +44,11 @@ $('#address-form, #res-address-form').on('submit', function(e){
           $container = $addressContainer;
       
       if (resPanelOpened) {
-            $container = $resAddressContainer;
-            $address = $('#res-address-input');
-        }
+    	  $container = $resAddressContainer;
+    	  $address = $('#res-address-input');
+      }
       
-        var address = $address.val(),
+      var address = $address.val(),
       	  url = 'https://maps.googleapis.com/maps/api/geocode/json?address=' + encodeURIComponent(address);
       
       freeze();
@@ -54,52 +63,13 @@ $('#address-form, #res-address-form').on('submit', function(e){
     			  	  lat = results.geometry.location.lat,
     			  	  lng = results.geometry.location.lng;
     			                     
-    			  $container.append('<div class="address" data-lat="'+lat+'" data-lng="'+lng+'" data-mean="driving" data-marker="'+markers.length+'">'
-    					  					+'<div class="delete" aria-label="delete"><span aria-hidden="true">&times;</span></div><span class="text">'
-    					  					+results.formatted_address
-					  						+'</span></div>');
-                                                                                
-                          if (resPanelOpened) {
-                            var select = $('#mean-select').html();
-
-                            $container.find('.address').last().append(select);
-                            $container.find('select').last().on('change', function() {
-                                var $this = $(this);
-                                $this.parent().data('mean', $this.val());
-                                addRoutes();
-                                addPOI();
-                               
-                            });
-                          }
+    			  addAddress(lat, lng, results.formatted_address);
     			  
-    			  $firstDescContainer.fadeOut(function(){
-    				  $sndDescContainer.fadeIn();
-    			  });
-    				  
-    			  $('.address[data-marker="'+markers.length+'"] .delete').on('click', function() {
-    				  var $div = $(this).parent();
-    				  
-    				  markers[$div.data('marker')].setMap(null);
-    				  markers.splice($div.data('marker'), 1);
-    				  $div.remove();
-    				  if ($addressContainer.html().trim() == '') {
-    					  $sndDescContainer.fadeOut(function() {
-    						  $firstDescContainer.fadeIn();
-    					  });
-    				  }
-    				  
-    				  refreshPOV();
-    			  });
-                          
-    			  
-    			  var marker = new google.maps.Marker({
-    				  map: map,
-    				  position: {lat:lat,lng:lng},
-                      icon: startMarkerIcon
-    			  });
-    			  
-    			  markers.push(marker);
-    			  refreshPOV();
+    			  if (!resPanelOpened) {
+	    			  $firstDescContainer.fadeOut(function(){
+	    				  $sndDescContainer.fadeIn();
+	    			  });
+    			  }
     			  
     			  $address.val(''); 
     		  } else {
@@ -109,23 +79,19 @@ $('#address-form, #res-address-form').on('submit', function(e){
      });
 });
 
-/* Send Form */
+// Link "Change transportation mode" with tab click
+$('#transportation').on('click', function(){
+    $("#start-pane-tab").click();
+});
 
-var resMarker = false,
-	placeMarkers = [],
-	$submit = $('#submit');
-
+//Send form
 $submit.on('click', calcCentralPoint);
-
-$('#re-submit').on('click', calcCentralPoint);
 
 $('#ResPlaceType').on('change',addPOI);
 
-
-
-// Util --------------
-var currentInfoWindow = null,
-	resPanelOpened = false;
+//----------------------
+// FUNCTIONS DECLARATION
+//----------------------
 
 function refreshPOV() {
 	var bounds = new google.maps.LatLngBounds();
@@ -171,21 +137,9 @@ function calcCentralPoint() {
             updateResAddress();
             
             if (!resPanelOpened) {
-	            // Copy starting points into
-                        
-	            var select = $('#mean-select').html();
-                     
-	            $resAddressContainer.html($addressContainer.html());
-	            //$resAddressContainer.find('.delete').remove();
-	            $resAddressContainer.find('.address').append(select);
-	            $resAddressContainer.find('select').on('change', function() {
-	            	var $this = $(this);
-	            	$this.parent().data('mean', $this.val());
-	            	addRoutes();
-	            	addPOI();
-	            });
-	            
-	            //end copying/cleaning
+            	
+	            $resAddressContainer.append($addressContainer.find('.address'));
+	            $resAddressContainer.find('select').show();
 	                     
 	            $('.grey-bkg').animate({opacity: 0}, 'fast', function() {
 	            	$('.grey-bkg').remove();
@@ -195,7 +149,7 @@ function calcCentralPoint() {
 	            });
 	            $('#res-panel').animate({left: '0px'}, 'slow');
                     
-                    resPanelOpened = true;
+                resPanelOpened = true;
             }
             
             addRoutes();
@@ -294,33 +248,35 @@ function createMarker(latLng, icon, infoText) {
 		map: map
 	});
 	
-	var infowindow = new google.maps.InfoWindow({
-		content: infoText 
-	});
+	if (infoText) {
+		var infowindow = new google.maps.InfoWindow({
+			content: infoText 
+		});
 
-	google.maps.event.addListener(marker, 'mouseover', function() {
-		infowindow.open(map,marker);
-	});
-
-	google.maps.event.addListener(marker, 'mouseout', function () {
-		if (currentInfoWindow != infowindow) { 
-			infowindow.close();
-		} 
-	});
-
-	google.maps.event.addListener(marker, 'click', function() {
-		var needOpen = true;
-		
-		if (currentInfoWindow != null) {
-			needOpen = currentInfoWindow.content != infowindow.content;
-			currentInfoWindow.close();
-			currentInfoWindow = null;
-		}
-		if (needOpen) {
-			infowindow.open(map, marker); 
-			currentInfoWindow = infowindow;
-		}
-	});
+		google.maps.event.addListener(marker, 'mouseover', function() {
+			infowindow.open(map,marker);
+		});
+	
+		google.maps.event.addListener(marker, 'mouseout', function () {
+			if (currentInfoWindow != infowindow) { 
+				infowindow.close();
+			} 
+		});
+	
+		google.maps.event.addListener(marker, 'click', function() {
+			var needOpen = true;
+			
+			if (currentInfoWindow != null) {
+				needOpen = currentInfoWindow.content != infowindow.content;
+				currentInfoWindow.close();
+				currentInfoWindow = null;
+			}
+			if (needOpen) {
+				infowindow.open(map, marker); 
+				currentInfoWindow = infowindow;
+			}
+		});
+	}
 	
 	return marker;
 }
@@ -345,6 +301,60 @@ function unFreeze() {
 	if (resMarker) {
 		resMarker.setDraggable(true);
 	}
+}
+
+function addAddress(lat, lng, txt) {
+	
+	var $container = $addressContainer,
+		select = $('#mean-select').html();
+	
+	if (resPanelOpened) {
+		$container = $resAddressContainer;
+	}
+		                     
+	$container.append('<div class="address" data-lat="'+lat+'" data-lng="'+lng+'" data-mean="driving" data-marker="'+markers.length+'">'
+  					+'<div class="delete" aria-label="delete"><span aria-hidden="true">&times;</span></div><span class="text">'
+  					+ txt
+					+'</span>'
+					+ select
+					+ '</div>');
+	
+	var $addedSelect = $container.find('select').last();
+	
+	if (resPanelOpened) {
+		$addedSelect.show();
+	}
+	
+	$addedSelect.on('change', function() {
+		var $this = $(this);
+		$this.parent().data('mean', $this.val());
+		addRoutes();
+		addPOI();
+	});				  
+					  
+	$container.find('.delete').on('click', function() {
+		var $div = $(this).parent();
+					  
+		markers[$div.data('marker')].setMap(null);
+		//markers.splice($div.data('marker'), 1);
+		$div.remove();
+		
+		if ($addressContainer.html().trim() == '') {
+			$sndDescContainer.fadeOut(function() {
+				$firstDescContainer.fadeIn();
+			});
+		}
+		
+		if (resMarker) {
+			addRoutes();
+		}
+		
+		refreshPOV();
+	});                   
+				  
+	var marker = createMarker({lat:lat,lng:lng}, startMarkerIcon);
+	markers.push(marker);
+	refreshPOV(); 
 }
 
 function addRoutes(lat, lng) {
@@ -421,7 +431,6 @@ function showDirectionDetails(index) {
 	$('#directionModal').modal();
 }
 
-//QUICK FIX ---- NEED TO BE PUT IN BACK END
 function updateResAddress() {
 	var resPos = resMarker.getPosition(),
 	  lat = resPos.lat(),
@@ -438,7 +447,6 @@ function updateResAddress() {
 		  }
 	});
 }
-// ------ END QUICK FIX --------------------
 
 function storeSearch() {
 	var $addresses = $('#res-panel .address'),
