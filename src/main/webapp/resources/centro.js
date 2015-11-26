@@ -407,3 +407,43 @@ function updateResAddress() {
 	});
 }
 // ------ END QUICK FIX --------------------
+
+function storeSearch() {
+	var $addresses = $('#res-panel .address'),
+		startingPoints = "",
+		mode = "";
+	
+		$addresses.each(function(){
+			var $this = $(this);
+			startingPoints += $this.data('lat') + "!" + $this.data('lng') + "|";
+			mode += $this.data('mean') + "|";
+		});
+		
+		if (startingPoints.length > 0) {
+			startingPoints = startingPoints.substr(0, startingPoints.length - 1);
+		}
+		
+		if (mode.length > 0) {
+			mode = mode.substr(0, mode.length - 1);
+		}
+		
+		var json = {
+			startingPoints: startingPoints,
+			mode: mode,
+			meetingType: $('#ResPlaceType').val()
+		};
+		
+		freeze();
+	    
+	    $.ajax({
+		    url: 'api/query/get?store',
+		  	dataType : 'json',
+		    contentType: "application/json;charset=utf-8",
+		  	type: 'POST',
+		    data: JSON.stringify(json),
+			success: function(res){
+				unFreeze();
+				console.log(res);
+			}
+	    });
+}
