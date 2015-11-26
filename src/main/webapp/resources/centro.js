@@ -69,7 +69,7 @@ $('#address-form').on('submit', function(e){
     			  var marker = new google.maps.Marker({
     				  map: map,
     				  position: {lat:lat,lng:lng},
-                                  icon: '/img/small_pin.png'
+                      icon: startMarkerIcon
     			  });
     			  
     			  markers.push(marker);
