@@ -113,6 +113,7 @@
 	<script src="https://maps.googleapis.com/maps/api/js?v=3.exp"></script>
 	<script src="<c:url value='/resources/centro.js'/>"></script>
 	<script>
+		var startMarkerIcon = "<c:url value='/img/small_pin.png'/>";
 		var resMarkerIcon = "<c:url value='/img/marker.png'/>";
 		var placeMarkerIcon = "<c:url value='/img/placeMarker.png'/>";
 		var starsImg = "<c:url value='/img/stars.png'/>";
