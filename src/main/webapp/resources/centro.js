@@ -22,17 +22,14 @@ var     $addressContainer = $('#address-container'),
 	directionsDetails = [],
 	times = [],
 	markers = [];
-<<<<<<< HEAD
-        
-$('#address-form, #res-address-form').on('submit', function(e){
-=======
+
 
 $('#transportation').on('click', function(){
     $("#start-pane-tab").click();
 });
 
 $('#address-form').on('submit', function(e){
->>>>>>> 4209266b7d215015879c1318aeee6da85be1dacb
+
       e.preventDefault();
       
       var $address = $('#address-input'),
