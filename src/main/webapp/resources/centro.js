@@ -32,6 +32,10 @@ var directions = [],
 	placeMarkers = [],
 	resPanelOpened = false;
 
+//AUTOCOMPLETE
+autocomplete = new google.maps.places.Autocomplete((document.getElementById('address-input')));
+autocomplete.addListener('place_changed', fillInAddress);
+
 //-------------
 // MAIN PROCESS
 //-------------
@@ -508,4 +512,8 @@ function storeSearch() {
 				window.history.pushState('', 'Centro', newURL);
 			}
 	    });
+}
+
+function fillInAddress(){
+	$('#address-input').val("");
 }
