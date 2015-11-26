@@ -23,7 +23,11 @@ var $address = $('#address-input'),
 	directionsDetails = [],
 	times = [],
 	markers = [];
-        
+
+$('#transportation').on('click', function(){
+    $("#start-pane-tab").click();
+});
+
 $('#address-form').on('submit', function(e){
       e.preventDefault();
       
