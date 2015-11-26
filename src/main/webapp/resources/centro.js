@@ -22,8 +22,17 @@ var     $addressContainer = $('#address-container'),
 	directionsDetails = [],
 	times = [],
 	markers = [];
+<<<<<<< HEAD
         
 $('#address-form, #res-address-form').on('submit', function(e){
+=======
+
+$('#transportation').on('click', function(){
+    $("#start-pane-tab").click();
+});
+
+$('#address-form').on('submit', function(e){
+>>>>>>> 4209266b7d215015879c1318aeee6da85be1dacb
       e.preventDefault();
       
       var $address = $('#address-input'),
@@ -90,7 +99,7 @@ $('#address-form, #res-address-form').on('submit', function(e){
     			  var marker = new google.maps.Marker({
     				  map: map,
     				  position: {lat:lat,lng:lng},
-                                  icon: '/img/small_pin.png'
+                      icon: startMarkerIcon
     			  });
     			  
     			  markers.push(marker);
@@ -434,3 +443,43 @@ function updateResAddress() {
 	});
 }
 // ------ END QUICK FIX --------------------
+
+function storeSearch() {
+	var $addresses = $('#res-panel .address'),
+		startingPoints = "",
+		mode = "";
+	
+		$addresses.each(function(){
+			var $this = $(this);
+			startingPoints += $this.data('lat') + "!" + $this.data('lng') + "|";
+			mode += $this.data('mean') + "|";
+		});
+		
+		if (startingPoints.length > 0) {
+			startingPoints = startingPoints.substr(0, startingPoints.length - 1);
+		}
+		
+		if (mode.length > 0) {
+			mode = mode.substr(0, mode.length - 1);
+		}
+		
+		var json = {
+			startingPoints: startingPoints,
+			mode: mode,
+			meetingType: $('#ResPlaceType').val()
+		};
+		
+		freeze();
+	    
+	    $.ajax({
+		    url: 'api/query/get?store',
+		  	dataType : 'json',
+		    contentType: "application/json;charset=utf-8",
+		  	type: 'POST',
+		    data: JSON.stringify(json),
+			success: function(res){
+				unFreeze();
+				console.log(res);
+			}
+	    });
+}

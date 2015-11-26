@@ -64,7 +64,7 @@
 		<!--h1>Filters</h1-->
 		<ul class="nav nav-tabs nav-justified filter-pills" role="tablist">
 		    <li role="presentation" class="active"><a href="#dest-pane" aria-controls="dest-pane" role="tab" data-toggle="tab">Destination</a></li>
-		    <li role="presentation"><a href="#start-pane" aria-controls="start-pane" role="tab" data-toggle="tab">Starting Points</a></li>
+		    <li role="presentation"><a href="#start-pane" aria-controls="start-pane" role="tab" data-toggle="tab" id="start-pane-tab">Starting Points</a></li>
 		</ul>
 
 	  	<div class="tab-content filter-content">
@@ -79,7 +79,9 @@
 		                </c:forEach>
 		            </select>
 				</div>
+                        <button class="btn btn-default" id="transportation"> Transportation Mode </button>
                     </div>
+                    
                     <div role="tabpanel" class="tab-pane fade" id="start-pane">
                             <h2>Addresses</h2>
                              <form id="res-address-form">
@@ -120,6 +122,7 @@
 	<script src="https://maps.googleapis.com/maps/api/js?v=3.exp"></script>
 	<script src="<c:url value='/resources/centro.js'/>"></script>
 	<script>
+		var startMarkerIcon = "<c:url value='/img/small_pin.png'/>";
 		var resMarkerIcon = "<c:url value='/img/marker.png'/>";
 		var placeMarkerIcon = "<c:url value='/img/placeMarker.png'/>";
 		var starsImg = "<c:url value='/img/stars.png'/>";
