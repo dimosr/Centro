@@ -461,21 +461,43 @@ function storeSearch() {
 		
 		var json = {
 			startingPoints: startingPoints,
-			mode: mode,
+			modes: mode,
 			meetingType: $('#ResPlaceType').val()
 		};
 		
 		freeze();
-	    
+
 	    $.ajax({
-		    url: 'api/query/get?store',
+		    url: 'api/query/store',
 		  	dataType : 'json',
 		    contentType: "application/json;charset=utf-8",
 		  	type: 'POST',
 		    data: JSON.stringify(json),
 			success: function(res){
 				unFreeze();
-				console.log(res);
+				var currentURL = window.location.href
+					paramPos = currentURL.indexOf('?'),
+					newURL = currentURL + '?tkn=' + res.id;
+				
+				if (paramPos > -1) {
+					if (paramPos == currentURL.length - 1) {
+						newURL = currentURL + 'tkn=' + res.id;
+					} else if (currentURL.indexOf('tkn=') > -1) {
+						var tknPos = currentURL.indexOf('tkn=') + 4,
+							andPos = currentURL.indexOf('&', tknPos);
+						
+						newURL = currentURL.substr(0, tknPos) + res.id;
+						
+						if (andPos > -1) {
+							newURL += currentURL.substr(andPos);
+						}
+						
+					} else {
+						newURL = currentURL + '&tkn=' + res.id;
+					}
+				}
+				
+				window.history.pushState('', 'Centro', newURL);
 			}
 	    });
 }

@@ -119,7 +119,7 @@
 	
 	<script src="<c:url value='/resources/jquery/jquery.min.js'/>"></script>
 	<script src="<c:url value='/resources/bootstrap/js/bootstrap.min.js'/>"></script>
-	<script src="https://maps.googleapis.com/maps/api/js?v=3.exp"></script>
+	<script src="https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=places"></script>
 	<script src="<c:url value='/resources/centro.js'/>"></script>
 	<script>
 		var startMarkerIcon = "<c:url value='/img/small_pin.png'/>";
