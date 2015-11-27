@@ -66,7 +66,7 @@ public class HttpServiceTest {
         destinations.add(new GeoCoordinate(51.5229378, -0.13082059999999274));
         String originParam = String.valueOf(origin.getLatitude()) + "," + String.valueOf(origin.getLongitude());
         String destinationsParam = String.valueOf(destinations.get(0).getLatitude()) + "," +  String.valueOf(destinations.get(0).getLongitude()) + "|" + String.valueOf(destinations.get(1).getLatitude()) + "," +  String.valueOf(destinations.get(1).getLongitude());
-        when(restRequest.getForObject(service.DISTANCE_API, String.class, originParam, destinationsParam, TransportationMode.CAR.getMapsFormat())).thenReturn(googleGeocodeResponse);
+        when(restRequest.getForObject(service.DISTANCE_API, String.class, originParam, destinationsParam, TransportationMode.CAR.getMapsFormat(), service.googleApiKey)).thenReturn(googleGeocodeResponse);
         
         List<Long> expectedDistances = Arrays.asList(new Long(4416), new Long(747));
         List<Long> actualDistances = service.distanceInSeconds(origin, destinations);
