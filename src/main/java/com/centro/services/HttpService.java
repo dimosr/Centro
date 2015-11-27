@@ -25,7 +25,7 @@ public class HttpService {
     
     public static final String GEOCODE_API = "https://maps.googleapis.com/maps/api/geocode/json?address={address}";
     public static final String REVERSE_GEOCODE_API = "https://maps.googleapis.com/maps/api/geocode/json?latlng={latitude},{longitude}";
-    public static final String DISTANCE_API = "https://maps.googleapis.com/maps/api/distancematrix/json?origins={origins}&destinations={destinations}&mode={mode}";
+    public static final String DISTANCE_API = "https://maps.googleapis.com/maps/api/distancematrix/json?origins={origins}&destinations={destinations}&mode={mode}&key={key}";
     public static final String PLACES_API = "https://maps.googleapis.com/maps/api/place/nearbysearch/json?location={location}&radius=1000&types={types}&key={key}&name={name}";
     public static final String PLACES_DETAILS_API = "https://maps.googleapis.com/maps/api/place/details/json?placeid={placeID}&key={key}";
     public static final String PLACES_PHOTOS_API = "https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference={0}&key={1}";
@@ -85,7 +85,7 @@ public class HttpService {
             if(i < (to.size()-1))    destinations += "|";
         }
         
-        String response = restRequest.getForObject(DISTANCE_API, String.class, origin, destinations, mode.getMapsFormat());
+        String response = restRequest.getForObject(DISTANCE_API, String.class, origin, destinations, mode.getMapsFormat(), googleApiKey);
         
         List<Long> seconds = new ArrayList<Long>();
         
