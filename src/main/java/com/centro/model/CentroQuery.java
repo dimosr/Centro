@@ -15,7 +15,7 @@ public class CentroQuery {
         return startingPoints;
     }
     
-    public String modes() {
+    public String getModes() {
         return modes;
     }
     

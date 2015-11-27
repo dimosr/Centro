@@ -205,6 +205,10 @@ p {
 	top: 40%;
 }
 
+#start-pane {
+	padding-bottom: 40px;
+}
+
 /*
  * Loader
  */

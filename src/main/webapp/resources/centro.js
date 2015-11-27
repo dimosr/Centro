@@ -22,6 +22,7 @@ var $addressContainer = $('#address-container'),
 	$resAddressContainer = $('#res-address-container'),
 	$firstDescContainer = $('#first-desc'),
 	$sndDescContainer = $('#snd-desc'),
+	$POIType = $('#ResPlaceType'),
 	$submit = $('.submit');
 
 // DATAS AND FLAGS
@@ -39,6 +40,58 @@ autocomplete.addListener('place_changed', fillInAddress);
 //-------------
 // MAIN PROCESS
 //-------------
+
+//IF TOKEN
+if (window.location.href.indexOf('tkn=') > -1) {
+	
+	var tknPos = window.location.href.indexOf('tkn=') + 4,
+		andPos = window.location.href.indexOf('&', tknPos),
+		tkn = window.location.href.substr(tknPos);
+	
+	if (andPos > -1) {
+		tkn = window.location.href.substr(tknPos, andPos - tknPos)
+	}
+	
+	freeze();
+    
+    $.ajax({
+	    url: 'api/query/get?id=' + tkn,
+	  	dataType : 'json',
+	    contentType: "application/json;charset=utf-8",
+	  	type: 'GET',
+		success: function(res){
+			if (!res.id) {
+				unFreeze();
+				return;
+			}
+			
+			var locations = res.startingPoints.split('|'),
+				modes = res.modes.split('|');
+			
+			$POIType.val(res.meetingType);
+			
+			$.each(locations, function(index, loc) {
+				var latLng = loc.split('!'),
+					lat = latLng[0],
+					lng = latLng[1];
+
+				$.ajax({
+					  url: 'https://maps.googleapis.com/maps/api/geocode/json?address=' + lat + ',' + lng,
+					  success: function(obj){	  
+						  if (obj.status == 'OK') {
+							  addAddress(lat, lng, obj.results[0].formatted_address, modes[index]);
+						  }
+						  
+						  if (index == locations.length - 1) {
+							  unFreeze();
+							  //$('.submit').first().click();
+						  }
+					  }
+				});
+			});
+		}
+    });
+}
 
 $('#address-form, #res-address-form').on('submit', function(e){
 
@@ -91,7 +144,7 @@ $('#transportation').on('click', function(){
 //Send form
 $submit.on('click', calcCentralPoint);
 
-$('#ResPlaceType').on('change',addPOI);
+$POIType.on('change',addPOI);
 
 //----------------------
 // FUNCTIONS DECLARATION
@@ -109,10 +162,14 @@ function calcCentralPoint() {
     var json = [];
     
     $('.address').each(function() {
-	var $this = $(this);
-	json.push({"latitude":$this.data('lat'), "longitude": $this.data('lng')});
+    	var $this = $(this);
+    	json.push({"latitude":$this.data('lat'), "longitude": $this.data('lng')});
     });
 	
+    if ($('.address').length == 0) {
+    	return;
+    }
+    
     freeze();
     
     $.ajax({
@@ -131,39 +188,47 @@ function calcCentralPoint() {
                 resMarker = createMarker({lat:res.latitude,lng:res.longitude}, resMarkerIcon, "Central Point");
                 resMarker.setDraggable(true);
                 google.maps.event.addListener(resMarker, 'dragend', function() {
-                	addPOI($('#ResPlaceType').val());
+                	addPOI($POIType.val());
                 	addRoutes();
                 	updateResAddress();
                 });
             }
             
-            // QUICK FIX
             updateResAddress();
             
             if (!resPanelOpened) {
-            	
-	            $resAddressContainer.append($addressContainer.find('.address'));
-	            $resAddressContainer.find('select').show();
-	                     
-	            $('.grey-bkg').animate({opacity: 0}, 'fast', function() {
-	            	$('.grey-bkg').remove();
-	            });
-	            $('#map').animate({left: '400px'}, 'slow', function() {
-	            	refreshPOV();
-	            });
-	            $('#res-panel').animate({left: '0px'}, 'slow');
-                    
-                resPanelOpened = true;
+	            openResPanel();
             }
             
             addRoutes();
+            addPOI();
 		}
     });
 }
 
+function openResPanel() {
+	$resAddressContainer.append($addressContainer.find('.address'));
+    $resAddressContainer.find('select').show();
+             
+    $('.grey-bkg').animate({opacity: 0}, 'fast', function() {
+    	$('.grey-bkg').remove();
+    });
+    $('#map').animate({left: '400px'}, 'slow', function() {
+    	refreshPOV();
+    });
+    $('#res-panel').animate({left: '0px'}, 'slow');
+        
+    resPanelOpened = true;
+    addPOI();
+}
+
 function addPOI() {
+	if(!resMarker) {
+		return;
+	}
+	
 	var gPos = resMarker.getPosition(),
-		pType = $('#ResPlaceType').val(),
+		pType = $POIType.val(),
 		$addresses = $('.address');
 		res = {};
 	
@@ -287,7 +352,7 @@ function createMarker(latLng, icon, infoText) {
 
 function newCentro(lat, lng) {
 	//resMarker.setPosition({lat:lat,lng:lng});
-	//addPOI($('#ResPlaceType').val());
+	//addPOI($POIType.val());
 	addRoutes(lat, lng);
 }
 
@@ -307,7 +372,7 @@ function unFreeze() {
 	}
 }
 
-function addAddress(lat, lng, txt) {
+function addAddress(lat, lng, txt, mode) {
 	
 	var $container = $addressContainer,
 		select = $('#mean-select').html();
@@ -327,6 +392,10 @@ function addAddress(lat, lng, txt) {
 	
 	if (resPanelOpened) {
 		$addedSelect.show();
+	}
+	
+	if (mode) {
+		$addedSelect.val(mode);
 	}
 	
 	$addedSelect.on('change', function() {
@@ -356,7 +425,7 @@ function addAddress(lat, lng, txt) {
 		refreshPOV();
 	});                   
 				  
-	var marker = createMarker({lat:lat,lng:lng}, startMarkerIcon);
+	var marker = createMarker({lat:lat*1,lng:lng*1}, startMarkerIcon);
 	markers.push(marker);
 	refreshPOV(); 
 }
@@ -474,7 +543,7 @@ function storeSearch() {
 		var json = {
 			startingPoints: startingPoints,
 			modes: mode,
-			meetingType: $('#ResPlaceType').val()
+			meetingType: $POIType.val()
 		};
 		
 		freeze();
