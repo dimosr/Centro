@@ -96,6 +96,9 @@
                             
                     </div>
 		</div>
+		<div id="save-button-container">
+			<button class="btn btn-default btn-success" id="save-button">Save my search!</button>
+		</div>
 	</div>
 	<div style="display:none;" id="mean-select">
 		<select class="form-control" style="display:none;">
@@ -109,6 +112,25 @@
 	  <div class="modal-dialog" role="document">
 	    <div class="modal-content">
 	      <div class="modal-body" id="direction-detail">
+	      </div>
+	      <div class="modal-footer">
+	        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+	      </div>
+	    </div>
+	  </div>
+	</div>
+	
+	<div class="modal fade" id="saveModal" tabindex="-1" role="dialog" aria-labelledby="saveModalLabel">
+	  <div class="modal-dialog" role="document">
+	    <div class="modal-content">
+	      <div class="modal-header">
+	      	<h3>Save and share your search!</h3>
+	      </div>
+	      <div class="modal-body">
+	      	You want to save that search and come back to it later? Don't worry, we have your back! Here, take this link on your journey:<br />
+      		<div class="well">
+	      		<a id="save-link"></a>
+	      	</div>
 	      </div>
 	      <div class="modal-footer">
 	        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>

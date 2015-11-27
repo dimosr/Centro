@@ -209,6 +209,11 @@ p {
 	padding-bottom: 40px;
 }
 
+#save-button-container {
+	margin: 20px;
+	text-align: center;
+}
+
 /*
  * Loader
  */

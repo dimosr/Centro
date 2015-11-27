@@ -23,6 +23,7 @@ var $addressContainer = $('#address-container'),
 	$firstDescContainer = $('#first-desc'),
 	$sndDescContainer = $('#snd-desc'),
 	$POIType = $('#ResPlaceType'),
+	$saveLink = $('#save-link');
 	$submit = $('.submit');
 
 // DATAS AND FLAGS
@@ -84,7 +85,7 @@ if (window.location.href.indexOf('tkn=') > -1) {
 						  
 						  if (index == locations.length - 1) {
 							  unFreeze();
-							  //$('.submit').first().click();
+							  $('.submit').first().click(); //TO COMMENT IF NEEDED
 						  }
 					  }
 				});
@@ -145,6 +146,14 @@ $('#transportation').on('click', function(){
 $submit.on('click', calcCentralPoint);
 
 $POIType.on('change',addPOI);
+
+$('#save-button').on('click', function() {
+	storeSearch(function(url) {
+		$saveLink.attr('href', url);
+		$saveLink.html(url);
+		$('#saveModal').modal();
+	});
+});
 
 //----------------------
 // FUNCTIONS DECLARATION
@@ -246,6 +255,10 @@ function addPOI() {
 	}
 	
 	if (pType == "") {
+		placeMarkers.forEach(function(p){
+			 p.setMap(null);
+		});
+		placeMarkers = [];
 		return true;
 	}
 	
@@ -521,7 +534,7 @@ function updateResAddress() {
 	});
 }
 
-function storeSearch() {
+function storeSearch(callback) {
 	var $addresses = $('#res-panel .address'),
 		startingPoints = "",
 		mode = "";
@@ -579,6 +592,9 @@ function storeSearch() {
 				}
 				
 				window.history.pushState('', 'Centro', newURL);
+				if (callback) {
+					callback(newURL);
+				}
 			}
 	    });
 }
