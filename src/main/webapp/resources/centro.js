@@ -23,7 +23,9 @@ var $addressContainer = $('#address-container'),
 	$firstDescContainer = $('#first-desc'),
 	$sndDescContainer = $('#snd-desc'),
 	$POIType = $('#ResPlaceType'),
-	$saveLink = $('#save-link');
+	$saveLink = $('#save-link'),
+	$fbShare = $('#fb-share'),
+	$twShare = $('#tw-share'),
 	$submit = $('.submit');
 
 // DATAS AND FLAGS
@@ -33,6 +35,10 @@ var directions = [],
 	markers = [],
 	placeMarkers = [],
 	resPanelOpened = false;
+
+// SOCIAL MEDIA
+var fbShare = "https://www.facebook.com/sharer/sharer.php?u=",
+	twShare = "https://twitter.com/home?status=";
 
 //AUTOCOMPLETE
 autocomplete = new google.maps.places.Autocomplete((document.getElementById('address-input')));
@@ -150,6 +156,8 @@ $POIType.on('change',addPOI);
 $('#save-button').on('click', function() {
 	storeSearch(function(url) {
 		$saveLink.attr('href', url);
+		$fbShare.attr('href', fbShare + encodeURIComponent(url));
+		$twShare.attr('href', twShare + encodeURIComponent(url));
 		$saveLink.html(url);
 		$('#saveModal').modal();
 	});

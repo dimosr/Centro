@@ -131,6 +131,7 @@
       		<div class="well">
 	      		<a id="save-link"></a>
 	      	</div>
+	      	<a href="" id="fb-share" target="_blank">Share on Facebook</a> - <a href="" id="tw-share" target="_blank">Share on Twitter</a>
 	      </div>
 	      <div class="modal-footer">
 	        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
