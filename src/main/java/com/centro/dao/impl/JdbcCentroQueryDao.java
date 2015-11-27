@@ -29,7 +29,7 @@ public class JdbcCentroQueryDao implements CentroQueryDao {
             connection = dataSource.getConnection();
             PreparedStatement prepStmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
             prepStmt.setString(1, centroQuery.getStartingPoints());
-            prepStmt.setString(2, centroQuery.modes());
+            prepStmt.setString(2, centroQuery.getModes());
             prepStmt.setString(3, centroQuery.getMeetingType());
             prepStmt.executeUpdate();
             
