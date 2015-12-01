@@ -3,6 +3,7 @@ package com.centro.controllers;
 import com.centro.dao.CentroQueryDao;
 import com.centro.model.CentroQuery;
 import com.centro.services.HttpService;
+import com.centro.services.InvalidResponseException;
 import com.centro.util.GeoCoordinate;
 import com.centro.util.Place;
 import com.centro.util.algo.MeetingPointCalculator;
@@ -56,7 +57,7 @@ public class ApiController {
     }
     
     @RequestMapping(value = "/api/places", method = RequestMethod.POST, produces="application/json", consumes="application/json") 
-    public @ResponseBody String places(@RequestBody String input) throws JsonProcessingException, IOException {
+    public @ResponseBody ResponseEntity<String> places(@RequestBody String input) throws JsonProcessingException, IOException {
         ObjectMapper jsonMapper = new ObjectMapper();
         
         JsonNode requestTree = jsonMapper.readTree(input);
@@ -68,25 +69,30 @@ public class ApiController {
         }
         else
             type = "";
-        
-        List<Place> places = httpService.getPlacesInsideRadius(new GeoCoordinate(latitude, longitude), type);
-        
-        Iterator<JsonNode> placesNodes = requestTree.get("startingPoints").elements();
-        List<GeoCoordinate> startingPoints = new ArrayList();
-        List<String> preferredModes = new ArrayList();
-        while(placesNodes.hasNext()) {
-            JsonNode placeNode = placesNodes.next();
-            latitude = placeNode.findValue("latitude").asDouble();
-            longitude = placeNode.findValue("longitude").asDouble();
-            String mode = placeNode.findValue("mode").asText();
-            
-            startingPoints.add(new GeoCoordinate(latitude, longitude));
-            preferredModes.add(mode);
+        try {
+            List<Place> places = httpService.getPlacesInsideRadius(new GeoCoordinate(latitude, longitude), type);
+            Iterator<JsonNode> placesNodes = requestTree.get("startingPoints").elements();
+            List<GeoCoordinate> startingPoints = new ArrayList();
+            List<String> preferredModes = new ArrayList();
+            while(placesNodes.hasNext()) {
+                JsonNode placeNode = placesNodes.next();
+                latitude = placeNode.findValue("latitude").asDouble();
+                longitude = placeNode.findValue("longitude").asDouble();
+                String mode = placeNode.findValue("mode").asText();
+
+                startingPoints.add(new GeoCoordinate(latitude, longitude));
+                preferredModes.add(mode);
+            }
+
+            List<Place> nearestPlaces = httpService.keepNearestPlaces(places, startingPoints, preferredModes, TOP_PLACES);
+            String output = jsonMapper.writeValueAsString(nearestPlaces);
+            return new ResponseEntity<String>(output, HttpStatus.OK);
+        }
+        catch(InvalidResponseException e) {
+            return new ResponseEntity<String>(HttpStatus.SERVICE_UNAVAILABLE);
         }
         
-        List<Place> nearestPlaces = httpService.keepNearestPlaces(places, startingPoints, preferredModes, TOP_PLACES);
-        String output = jsonMapper.writeValueAsString(nearestPlaces);
-        return output;
+            
     }
     
     @RequestMapping(value = "/api/query/get", method = RequestMethod.GET, produces="application/json", params={"id"}) 

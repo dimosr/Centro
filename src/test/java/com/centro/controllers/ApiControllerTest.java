@@ -1,6 +1,7 @@
 package com.centro.controllers;
 
 import com.centro.services.HttpService;
+import com.centro.services.InvalidResponseException;
 import com.centro.util.GeoCoordinate;
 import com.centro.util.Place;
 import com.centro.util.PlaceInfo;
@@ -18,9 +19,12 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import static org.mockito.Matchers.any;
 import org.mockito.Mock;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 import org.mockito.Spy;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.test.context.ContextConfiguration;
 
@@ -49,7 +53,7 @@ public class ApiControllerTest {
     }
     
     @Test
-    public void placesTest() throws IOException {
+    public void placesTest() throws IOException, InvalidResponseException {
         GeoCoordinate inputCoord = new GeoCoordinate(51.53128283381906, -0.15418765192555384);
         PlaceType placeType = PlaceType.NIGHT_CLUB;
         String query = "{\"latitude\": " + inputCoord.getLatitude() + ", \"longitude\":" + inputCoord.getLongitude() + ", \"type\": \"" + placeType.getGoogleApiName() + "\"," + 
@@ -69,8 +73,12 @@ public class ApiControllerTest {
         ObjectMapper jsonMapper = new ObjectMapper();
         String expectedResponse = jsonMapper.writeValueAsString(sortedPlaces);
         
-        String actualResponse = controller.places(query);
-        assertEquals(expectedResponse, actualResponse);
+        ResponseEntity<String> actualResponse = controller.places(query);
+        assertEquals(expectedResponse, actualResponse.getBody());
+        
+        doThrow(new InvalidResponseException()).when(service).getPlacesInsideRadius(any(GeoCoordinate.class), any(String.class));
+        actualResponse = controller.places(query);
+        assertEquals(HttpStatus.SERVICE_UNAVAILABLE, actualResponse.getStatusCode());
     }
     
 }

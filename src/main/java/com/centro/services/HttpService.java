@@ -54,8 +54,10 @@ public class HttpService {
         this.restRequest = restRequest;
     }
     
-    public GeoCoordinate getPlaceGeocode(String address) throws IOException {
+    public GeoCoordinate getPlaceGeocode(String address) throws IOException, InvalidResponseException {
         String response = restRequest.getForObject(GEOCODE_API, String.class, address);
+        if(!isOK(response))
+            throw new InvalidResponseException();
         ObjectMapper jsonMapper = new ObjectMapper();
         JsonNode location = jsonMapper.readTree(response);
         location = location.get("results").findValue("geometry").findValue("location");
@@ -65,8 +67,10 @@ public class HttpService {
         return coordinate;
     }
     
-    public String getAddressName(GeoCoordinate coordinate) throws IOException {
+    public String getAddressName(GeoCoordinate coordinate) throws IOException, InvalidResponseException {
         String response = restRequest.getForObject(REVERSE_GEOCODE_API, String.class, coordinate.getLatitude(), coordinate.getLongitude());
+        if(!isOK(response))
+            throw new InvalidResponseException();
         
         ObjectMapper jsonMapper = new ObjectMapper();
         JsonNode location = jsonMapper.readTree(response);
@@ -76,7 +80,7 @@ public class HttpService {
         return address;
     }
     
-    public List<Long> distanceInSecondsByMode(GeoCoordinate from, List<GeoCoordinate> to, TransportationMode mode) throws IOException {
+    public List<Long> distanceInSecondsByMode(GeoCoordinate from, List<GeoCoordinate> to, TransportationMode mode) throws IOException, InvalidResponseException {
         String origin = from.getLatitude() + "," + from.getLongitude();
         String destinations = "";
         for(int i = 0; i < to.size(); i++) {
@@ -86,6 +90,8 @@ public class HttpService {
         }
         
         String response = restRequest.getForObject(DISTANCE_API, String.class, origin, destinations, mode.getMapsFormat(), googleApiKey);
+        if(!isOK(response))
+            throw new InvalidResponseException();
         
         List<Long> seconds = new ArrayList<Long>();
         
@@ -100,11 +106,11 @@ public class HttpService {
         return seconds;
     }
     
-    public List<Long> distanceInSeconds(GeoCoordinate from, List<GeoCoordinate> to) throws IOException {
+    public List<Long> distanceInSeconds(GeoCoordinate from, List<GeoCoordinate> to) throws IOException, InvalidResponseException {
         return distanceInSecondsByMode(from, to, TransportationMode.CAR);
     }
     
-    public List<Place> keepNearestPlaces(List<Place> unfilteredPlaces, List<GeoCoordinate> origins, List<String> modes, int topSize) throws IOException {
+    public List<Place> keepNearestPlaces(List<Place> unfilteredPlaces, List<GeoCoordinate> origins, List<String> modes, int topSize) throws IOException, InvalidResponseException {
         List<GeoCoordinate> placesCoords = new ArrayList();
         for(Place place : unfilteredPlaces)
             placesCoords.add(place.getLocation());
@@ -124,10 +130,12 @@ public class HttpService {
         return nearestPlaces;
     }
     
-    public List<Place> getPlacesInsideRadius(GeoCoordinate center, String type) throws IOException {
+    public List<Place> getPlacesInsideRadius(GeoCoordinate center, String type) throws IOException, InvalidResponseException {
         
         String locationString = center.getLatitude() + "," + center.getLongitude();
         String response = restRequest.getForObject(PLACES_API, String.class, locationString, type, googleApiKey, "");
+        if(!isOK(response))
+            throw new InvalidResponseException();
         
         ObjectMapper jsonMapper = new ObjectMapper();
         JsonNode responseTree = jsonMapper.readTree(response);
@@ -152,8 +160,10 @@ public class HttpService {
     }
     
     
-    public PlaceInfo getPlaceInfo(Place place) throws IOException {
+    public PlaceInfo getPlaceInfo(Place place) throws IOException, InvalidResponseException {
         String response = restRequest.getForObject(PLACES_DETAILS_API, String.class, place.getGoogleID(), googleApiKey, "");
+        if(!isOK(response))
+            throw new InvalidResponseException();
         
         ObjectMapper jsonMapper = new ObjectMapper();
         JsonNode responseTree = jsonMapper.readTree(response).findValue("result");
@@ -201,5 +211,17 @@ public class HttpService {
                     return 1;
             }
         });
+    }
+    
+    /* Checking Google API responded normally */
+    public boolean isOK(String response) throws IOException {
+        ObjectMapper jsonMapper = new ObjectMapper();
+        JsonNode responseTree = jsonMapper.readTree(response);
+        if(responseTree.findValue("status") != null) {
+            String responseStatus = responseTree.findValue("status").asText();
+            return responseStatus.equals("OK");
+        }
+        else
+            return false;
     }
 }
