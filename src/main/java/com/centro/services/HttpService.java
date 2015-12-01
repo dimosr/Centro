@@ -110,7 +110,24 @@ public class HttpService {
         return distanceInSecondsByMode(from, to, TransportationMode.CAR);
     }
     
-    public List<Place> keepNearestPlaces(List<Place> unfilteredPlaces, List<GeoCoordinate> origins, List<String> modes, int topSize) throws IOException, InvalidResponseException {
+    public List<Place> filterByMaxTime(List<Place> places, List<Long> maxTimes) {
+        Iterator<Place> it = places.iterator();
+        while(it.hasNext()) {
+            Place place = it.next();
+            boolean satisfiesConstraints = true;
+            for(int j = 0; j < maxTimes.size(); j++) {
+                long maxTime = maxTimes.get(j);
+                long actualTime = place.getSecondsToReach().get(j);
+                if(actualTime > maxTime)
+                    satisfiesConstraints = false;
+            }
+            if(!satisfiesConstraints)
+                it.remove();
+        }
+        return places;
+    }
+    
+    public List<Place> keepNearestPlaces(List<Place> unfilteredPlaces, List<GeoCoordinate> origins, List<String> modes, int topSize, List<Long> maxTimes) throws IOException, InvalidResponseException {
         List<GeoCoordinate> placesCoords = new ArrayList();
         for(Place place : unfilteredPlaces)
             placesCoords.add(place.getLocation());
@@ -122,10 +139,13 @@ public class HttpService {
             for(int j = 0; j < distancesInSeconds.size(); j++)
                 unfilteredPlaces.get(j).addSecondToReach(distancesInSeconds.get(j));
         }
-        sortByTimeSum(unfilteredPlaces);
         
-        int topLimit = (unfilteredPlaces.size() > topSize) ? topSize : unfilteredPlaces.size();
-        List<Place> nearestPlaces = unfilteredPlaces.subList(0, topLimit);
+        List<Place> filteredPlaces = filterByMaxTime(unfilteredPlaces, maxTimes);
+        
+        sortByTimeSum(filteredPlaces);
+        
+        int topLimit = (filteredPlaces.size() > topSize) ? topSize : filteredPlaces.size();
+        List<Place> nearestPlaces = filteredPlaces.subList(0, topLimit);
         
         return nearestPlaces;
     }

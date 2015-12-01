@@ -68,7 +68,7 @@ public class ApiControllerTest {
         List<Place> places = Arrays.asList(place1, place2);
         List<Place> sortedPlaces = Arrays.asList(place2, place1);
         when(service.getPlacesInsideRadius(any(GeoCoordinate.class), any(String.class))).thenReturn(places);
-        when(service.keepNearestPlaces(any(List.class), any(List.class), any(List.class),any(Integer.class))).thenReturn(sortedPlaces);
+        when(service.keepNearestPlaces(any(List.class), any(List.class), any(List.class),any(Integer.class), any(List.class))).thenReturn(sortedPlaces);
         
         ObjectMapper jsonMapper = new ObjectMapper();
         String expectedResponse = jsonMapper.writeValueAsString(sortedPlaces);

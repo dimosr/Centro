@@ -74,17 +74,22 @@ public class ApiController {
             Iterator<JsonNode> placesNodes = requestTree.get("startingPoints").elements();
             List<GeoCoordinate> startingPoints = new ArrayList();
             List<String> preferredModes = new ArrayList();
+            List<Long> maxTimes = new ArrayList();
             while(placesNodes.hasNext()) {
                 JsonNode placeNode = placesNodes.next();
                 latitude = placeNode.findValue("latitude").asDouble();
                 longitude = placeNode.findValue("longitude").asDouble();
                 String mode = placeNode.findValue("mode").asText();
+                if(placeNode.findValue("maxTime") != null)
+                    maxTimes.add(placeNode.findValue("maxTime").longValue());
+                else
+                    maxTimes.add(Long.MAX_VALUE); 
 
                 startingPoints.add(new GeoCoordinate(latitude, longitude));
                 preferredModes.add(mode);
             }
 
-            List<Place> nearestPlaces = httpService.keepNearestPlaces(places, startingPoints, preferredModes, TOP_PLACES);
+            List<Place> nearestPlaces = httpService.keepNearestPlaces(places, startingPoints, preferredModes, TOP_PLACES, maxTimes);
             String output = jsonMapper.writeValueAsString(nearestPlaces);
             return new ResponseEntity<String>(output, HttpStatus.OK);
         }
