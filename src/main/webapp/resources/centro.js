@@ -22,6 +22,7 @@ var $addressContainer = $('#address-container'),
 	$resAddressContainer = $('#res-address-container'),
 	$firstDescContainer = $('#first-desc'),
 	$sndDescContainer = $('#snd-desc'),
+	$errorModal = $('#errorModal'),
 	$POIType = $('#ResPlaceType'),
 	$saveLink = $('#save-link'),
 	$fbShare = $('#fb-share'),
@@ -41,12 +42,13 @@ var fbShare = "https://www.facebook.com/sharer/sharer.php?u=",
 	twShare = "https://twitter.com/home?status=";
 
 //AUTOCOMPLETE
-autocomplete = new google.maps.places.Autocomplete((document.getElementById('address-input')));
-autocomplete.addListener('place_changed', fillInAddress);
+var autocomplete = new google.maps.places.Autocomplete((document.getElementById('address-input')));
 
 //-------------
 // MAIN PROCESS
 //-------------
+
+autocomplete.addListener('place_changed', fillInAddress);
 
 //IF TOKEN
 if (window.location.href.indexOf('tkn=') > -1) {
@@ -219,6 +221,9 @@ function calcCentralPoint() {
             
             addRoutes();
             addPOI();
+		},
+		statusCode: {
+		    503: serviceUnavailable
 		}
     });
 }
@@ -327,7 +332,10 @@ function addPOI() {
             	var m = createMarker({lat:place.location.latitude,lng:place.location.longitude}, placeMarkerIcon, html);
             	placeMarkers.push(m);
             });
-        }
+        },
+		statusCode: {
+		    503: serviceUnavailable
+		}
 	 });
 }
 
@@ -609,4 +617,9 @@ function storeSearch(callback) {
 
 function fillInAddress(){
 	$('#address-input').val("");
+}
+
+function serviceUnavailable () {
+    unFreeze();
+    $errorModal.modal();
 }
