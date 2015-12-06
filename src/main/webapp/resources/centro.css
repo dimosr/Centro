@@ -218,6 +218,15 @@ p {
  * Loader
  */
  
+#overlay {
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	background: rgba(28, 49, 68, 0.6);
+}
+ 
 #loader {
 	position: absolute;
 	top: 50%;
@@ -229,6 +238,17 @@ p {
 	background: white;
 	border: 1px solid #7FDBDC;
 	border-radius: 5px;
+	text-align: center;
+}
+
+#load-phrase {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	width: 200px;
+	margin-top: 75px;
+	margin-left: -100px;
+	color: white;
 	text-align: center;
 }
 

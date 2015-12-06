@@ -50,10 +50,6 @@
 			<button class="btn btn-default submit">Go!</button>
 		</div>
 	</div>
-	
-	<div id="loader" style="display:none;">
-		<img src="<c:url value='/img/loader.gif'/>" alt="loading" />
-	</div>
 
 	<div id="res-panel">
 		<img src="<c:url value='/img/logo.png'/>" class="logo" />
@@ -100,6 +96,15 @@
 			<button class="btn btn-default btn-success" id="save-button">Save my search!</button>
 		</div>
 	</div>
+	
+	<div id="overlay" style="display:none;"></div>
+	<div id="load-phrase" style="display:none;"></div>
+	<div id="loader" style="display:none;">
+		<img src="<c:url value='/img/loader.gif'/>" alt="loading" />
+	</div>
+	
+	
+	<!--  Util for cpy paste later on -->
 	<div style="display:none;" id="mean-select">
 		<select class="form-control" style="display:none;">
             <c:forEach var="transportationMode" items="${transportationModes}">

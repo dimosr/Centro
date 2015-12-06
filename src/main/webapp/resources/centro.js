@@ -223,6 +223,7 @@ function calcCentralPoint() {
             addPOI();
 		},
 		statusCode: {
+		    500: serviceUnavailable,
 		    503: serviceUnavailable
 		}
     });
@@ -334,6 +335,7 @@ function addPOI() {
             });
         },
 		statusCode: {
+		    500: serviceUnavailable,
 		    503: serviceUnavailable
 		}
 	 });
@@ -386,7 +388,13 @@ function newCentro(lat, lng) {
 }
 
 function freeze() {
+	var phrases = ['Crunching data for you...', 'Checking north and south pole.', 'Looking for santa\'s house...', 'Checking water level in oceans.'];
+	
+	phrase = phrases[Math.floor(Math.random()*phrases.length)];
+	$('#load-phrase').html(phrase);
+	$('#overlay').show();
 	$('#loader').show();
+	$('#load-phrase').show();
 	$('input, select, button').attr('disabled', 'disabled');
 	if (resMarker) {
 		resMarker.setDraggable(false);
@@ -394,7 +402,9 @@ function freeze() {
 }
 
 function unFreeze() {
+	$('#overlay').hide();
 	$('#loader').hide();
+	$('#load-phrase').hide();
 	$('input, select, button').removeAttr('disabled');
 	if (resMarker) {
 		resMarker.setDraggable(true);
