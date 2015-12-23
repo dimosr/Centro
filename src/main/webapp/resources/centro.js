@@ -48,8 +48,6 @@ var autocomplete = new google.maps.places.Autocomplete((document.getElementById(
 // MAIN PROCESS
 //-------------
 
-autocomplete.addListener('place_changed', fillInAddress);
-
 //IF TOKEN
 if (window.location.href.indexOf('tkn=') > -1) {
 	
@@ -102,6 +100,7 @@ if (window.location.href.indexOf('tkn=') > -1) {
     });
 }
 
+// Main form sent, calc mid
 $('#address-form, #res-address-form').on('submit', function(e){
 
       e.preventDefault();
@@ -231,7 +230,7 @@ function calcCentralPoint() {
 
 function openResPanel() {
 	$resAddressContainer.append($addressContainer.find('.address'));
-    $resAddressContainer.find('select').show();
+    $resAddressContainer.find('table').show();
              
     $('.grey-bkg').animate({opacity: 0}, 'fast', function() {
     	$('.grey-bkg').remove();
@@ -264,7 +263,8 @@ function addPOI() {
 		res.startingPoints.push({
 			latitude: $($addresses[i]).data('lat'),
 			longitude: $($addresses[i]).data('lng'),
-			mode: $($addresses[i]).data('mean')
+			mode: $($addresses[i]).data('mean'),
+			maxTime: $($addresses[i]).data('max-time')
 		});
 	}
 	
@@ -424,25 +424,56 @@ function addAddress(lat, lng, txt, mode) {
   					+'<div class="delete" aria-label="delete"><span aria-hidden="true">&times;</span></div><span class="text">'
   					+ txt
 					+'</span>'
-					+ select
-					+ '</div>');
+					+'<table style="display:none;">'
+					+'	<tr>'
+					+'		<td>Mean of transportation</td>'
+					+'		<td class="middle"></td>'
+					+'		<td>Max-time</td>'
+					+'	</tr>'
+					+'	<tr>'
+					+'		<td>'
+					+ 			select
+					+'		</td>'
+					+'		<td class="middle"></td>'
+					+'		<td>'
+					+'			<select class="form-control max-time">'
+					+'				<option value="">---</option>'
+					+'				<option value="15">15min</option>'
+					+'				<option value="30">30min</option>'
+					+'				<option value="45">45min</option>'
+					+'				<option value="60">1h</option>'
+					+'				<option value="90">1h30</option>'
+					+'				<option value="120">2h</option>'
+					+'			</select>'
+					+'		</td>'
+					+'	</tr>'
+					+'</table>'
+					+'</div>');
 	
-	var $addedSelect = $container.find('select').last();
+	
+	var $addedTable = $container.find('table').last(),
+		$addedMode = $container.find('.mode').last(),
+		$addedMaxTime = $container.find('.max-time').last();
 	
 	if (resPanelOpened) {
-		$addedSelect.show();
+		$addedTable.show();
 	}
 	
 	if (mode) {
-		$addedSelect.val(mode);
+		$addedMode.val(mode);
 	}
 	
-	$addedSelect.on('change', function() {
+	$addedMode.on('change', function() {
 		var $this = $(this);
-		$this.parent().data('mean', $this.val());
+		$this.closest('.address').data('mean', $this.val());
 		addRoutes();
 		addPOI();
-	});				  
+	});
+	
+	$addedMaxTime.on('change', function() {
+		var $this = $(this);
+		$this.closest('.address').data('max-time', $this.val());
+	});	
 					  
 	$container.find('.delete').on('click', function() {
 		var $div = $(this).parent();
@@ -623,10 +654,6 @@ function storeSearch(callback) {
 				}
 			}
 	    });
-}
-
-function fillInAddress(){
-	$('#address-input').val("");
 }
 
 function serviceUnavailable () {

@@ -193,16 +193,20 @@ p {
 
 #res-address-container .address .text {
 	display: inline-block;
-	width: 60%;
-        min-height: 70px;
+	width: 95%;
 }
 
-#res-address-container .address select {
-	display: inline-block;
-	width: 35%;
-	position: absolute;
-	right: 5px;
-	top: 40%;
+#res-address-container .address table {
+	width: 100%;
+	font-style: italic;
+}
+
+#res-address-container .address td {
+	width: 45%;
+}
+
+#res-address-container .address table td.middle {
+	width: 10%;
 }
 
 #start-pane {

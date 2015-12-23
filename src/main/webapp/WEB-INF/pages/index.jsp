@@ -106,7 +106,7 @@
 	
 	<!--  Util for cpy paste later on -->
 	<div style="display:none;" id="mean-select">
-		<select class="form-control" style="display:none;">
+		<select class="form-control mode">
             <c:forEach var="transportationMode" items="${transportationModes}">
                 <option value="<c:out value="${transportationMode.getMapsFormat()}"/>"><c:out value="${transportationMode.getFrontEndName()}"/></option>
             </c:forEach>
