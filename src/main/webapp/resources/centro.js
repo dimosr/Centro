@@ -260,12 +260,17 @@ function addPOI() {
 	res.startingPoints = [];
 	
 	for (var i = 0; i < $addresses.length; ++i) {
-		res.startingPoints.push({
+		var toPush = {
 			latitude: $($addresses[i]).data('lat'),
 			longitude: $($addresses[i]).data('lng'),
-			mode: $($addresses[i]).data('mean'),
-			maxTime: $($addresses[i]).data('max-time')
-		});
+			mode: $($addresses[i]).data('mean')
+		};
+		
+		if ($($addresses[i]).data('max-time')) {
+			toPush['maxTime'] = $($addresses[i]).data('max-time') * 60;
+		}
+		
+		res.startingPoints.push(toPush);
 	}
 	
 	if (pType == "") {
@@ -525,7 +530,9 @@ function addRoutes(lat, lng) {
 	// ---- End Cleaning
 	
 	var destString = lat + ',' + lng,
-		$addresses = $('#res-panel .address');
+		$addresses = $('#res-panel .address'),
+		hour = $('#hour').val(),
+		min = $('#min').val();
 	
 	for (var i = 0; i < $addresses.length; ++i) {
 		 var directionsService = new google.maps.DirectionsService(),
@@ -535,6 +542,12 @@ function addRoutes(lat, lng) {
 				 travelMode: google.maps.DirectionsTravelMode[$($addresses[i]).data('mean').toUpperCase()],
 				 unitSystem: google.maps.UnitSystem.METRIC
 		 	};
+		 
+		 if (hour != "" && min != "") {
+			 var d = new Date();
+			 d.setHours(hour, min);
+			 directionsRequest['arrival_time'] = d.getTime()/1000;
+		 }
 		 
 		 directionsService.route(directionsRequest, function (response, status) {
 			 if (status == google.maps.DirectionsStatus.OK) {
