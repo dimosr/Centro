@@ -43,7 +43,7 @@ var fbShare = "https://www.facebook.com/sharer/sharer.php?u=",
 
 //AUTOCOMPLETE
 var autocomplete = new google.maps.places.Autocomplete((document.getElementById('address-input')));
-
+var autocompleteRes = new google.maps.places.Autocomplete((document.getElementById('res-address-input')));
 //-------------
 // MAIN PROCESS
 //-------------
