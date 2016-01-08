@@ -147,10 +147,6 @@ p {
 	display: none;
 }
 
-.submit {
-	float: right;
-}
-
 /*
  * RESULT DISPLAYED
  */
@@ -207,10 +203,6 @@ p {
 
 #res-address-container .address table td.middle {
 	width: 10%;
-}
-
-#start-pane {
-	padding-bottom: 40px;
 }
 
 #save-button-container {

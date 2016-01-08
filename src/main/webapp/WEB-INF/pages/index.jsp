@@ -132,11 +132,11 @@
 				</div>
 			 </form>
 	         <div id="res-address-container"> </div>
-	         		<button class="btn btn-default submit">Recalculate midpoint!</button>
 	         </div>
 		</div>
 		<div id="save-button-container">
-			<button class="btn btn-default btn-success" id="save-button">Save my search!</button>
+			<button class="btn btn-default submit btn-lg">Recalculate</button><br /><br />
+			<button class="btn btn-default btn-success" id="save-button">Save/Share my search!</button>
 		</div>
 	</div>
 	

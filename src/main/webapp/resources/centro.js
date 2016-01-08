@@ -152,7 +152,7 @@ $('#transportation').on('click', function(){
 //Send form
 $submit.on('click', calcCentralPoint);
 
-$POIType.on('change',addPOI);
+//$POIType.on('change',addPOI);
 
 $('#save-button').on('click', function() {
 	storeSearch(function(url) {
