@@ -269,6 +269,11 @@ p {
     padding: 10px;
 }
 
+#hour, #min {
+	display: inline-block;
+	width: 30%;
+}
+
 /*
  * POI
  */

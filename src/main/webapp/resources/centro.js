@@ -235,11 +235,14 @@ function openResPanel() {
     $('.grey-bkg').animate({opacity: 0}, 'fast', function() {
     	$('.grey-bkg').remove();
     });
+    
+    //Check responsiveness here
     $('#map').animate({left: '400px'}, 'slow', function() {
     	refreshPOV();
     });
     $('#res-panel').animate({left: '0px'}, 'slow');
-        
+    // -- 
+    
     resPanelOpened = true;
     addPOI();
 }
@@ -546,7 +549,8 @@ function addRoutes(lat, lng) {
 		 if (hour != "" && min != "") {
 			 var d = new Date();
 			 d.setHours(hour, min);
-			 directionsRequest['arrival_time'] = d.getTime()/1000;
+			 //directionsRequest.arrival_time = d.getTime()/1000;
+			 // TODO
 		 }
 		 
 		 directionsService.route(directionsRequest, function (response, status) {
