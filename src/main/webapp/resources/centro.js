@@ -300,6 +300,11 @@ function addPOI() {
 			
 			unFreeze();
 			
+			// HERE !!!!
+			if (places.length == 0) {
+				$('#noplacesModal').modal();
+			}
+			
 			placeMarkers.forEach(function(p){
 				 p.setMap(null);
 			});

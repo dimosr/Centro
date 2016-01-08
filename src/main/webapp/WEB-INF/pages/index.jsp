@@ -199,6 +199,17 @@
 	  </div>
 	</div>
 	
+	<div class="modal fade" id="noplacesModal" tabindex="-1" role="dialog" aria-labelledby="noplacesModalLabel">
+	  <div class="modal-dialog" role="document">
+	    <div class="modal-content">
+	      <div class="modal-body" style="text-align:center;">
+			<img src="<c:url value='/img/noplaces.jpg'/>" alt="No places available"/>
+	        <span data-dismiss="modal" style="float:right;font-size:2em;cursor:pointer;"><span aria-hidden="true">&times;</span></span>
+	      </div>
+	    </div>
+	  </div>
+	</div>
+	
 	<script src="<c:url value='/resources/jquery/jquery.min.js'/>"></script>
 	<script src="<c:url value='/resources/bootstrap/js/bootstrap.min.js'/>"></script>
 	<script src="https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=places"></script>
