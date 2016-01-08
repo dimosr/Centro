@@ -69,7 +69,7 @@
 				<div class="form-group">
 		            <select class="form-control" id="ResPlaceType">
 		            	<option value="">Nothing specific</option>
-		            	<option value="any">Any point of interest</option>
+		            	<option value="any" selected="selected">Any point of interest</option>
 		                <c:forEach var="placeType" items="${placeTypes}">
 		                    <option value="<c:out value="${placeType.getGoogleApiName()}"/>"><c:out value="${placeType.getFrontEndName()}"/></option>
 		                </c:forEach>

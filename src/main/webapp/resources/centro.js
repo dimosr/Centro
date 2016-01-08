@@ -474,8 +474,8 @@ function addAddress(lat, lng, txt, mode) {
 	$addedMode.on('change', function() {
 		var $this = $(this);
 		$this.closest('.address').data('mean', $this.val());
-		addRoutes();
-		addPOI();
+		//addRoutes();
+		//addPOI();
 	});
 	
 	$addedMaxTime.on('change', function() {
