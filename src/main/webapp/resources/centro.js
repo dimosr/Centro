@@ -24,6 +24,7 @@ var $addressContainer = $('#address-container'),
 	$sndDescContainer = $('#snd-desc'),
 	$errorModal = $('#errorModal'),
 	$POIType = $('#ResPlaceType'),
+	$resPanel = $('#res-panel'),
 	$saveLink = $('#save-link'),
 	$fbShare = $('#fb-share'),
 	$twShare = $('#tw-share'),
@@ -35,7 +36,7 @@ var directions = [],
 	times = [],
 	markers = [],
 	placeMarkers = [],
-	resPanelOpened = false;
+	resOpenedOnce = false;
 
 // SOCIAL MEDIA
 var fbShare = "https://www.facebook.com/sharer/sharer.php?u=",
@@ -108,7 +109,7 @@ $('#address-form, #res-address-form').on('submit', function(e){
       var $address = $('#address-input'),
           $container = $addressContainer;
       
-      if (resPanelOpened) {
+      if (resOpenedOnce) {
     	  $container = $resAddressContainer;
     	  $address = $('#res-address-input');
       }
@@ -130,7 +131,7 @@ $('#address-form, #res-address-form').on('submit', function(e){
     			                     
     			  addAddress(lat, lng, results.formatted_address);
     			  
-    			  if (!resPanelOpened) {
+    			  if (!resOpenedOnce) {
 	    			  $firstDescContainer.fadeOut(function(){
 	    				  $sndDescContainer.fadeIn();
 	    			  });
@@ -162,6 +163,13 @@ $('#save-button').on('click', function() {
 		$saveLink.html(url);
 		$('#saveModal').modal();
 	});
+});
+
+$('#hamburger').on('click', toggleResPanel);
+$(window).resize(function() {
+	if ($(window).width() >= 768 && !$resPanel.hasClass('opened')) {
+		toggleResPanel();
+	}
 });
 
 //----------------------
@@ -214,8 +222,11 @@ function calcCentralPoint() {
             
             updateResAddress();
             
-            if (!resPanelOpened) {
-	            openResPanel();
+            if (!resOpenedOnce) {
+            	firstOpening();
+            	if ($(window).width() >= 768) {
+            		toggleResPanel();
+            	}
             }
             
             addRoutes();
@@ -228,23 +239,26 @@ function calcCentralPoint() {
     });
 }
 
-function openResPanel() {
+function firstOpening() {
 	$resAddressContainer.append($addressContainer.find('.address'));
     $resAddressContainer.find('table').show();
              
     $('.grey-bkg').animate({opacity: 0}, 'fast', function() {
     	$('.grey-bkg').remove();
     });
-    
-    //Check responsiveness here
-    $('#map').animate({left: '400px'}, 'slow', function() {
-    	refreshPOV();
-    });
-    $('#res-panel').animate({left: '0px'}, 'slow');
-    // -- 
-    
-    resPanelOpened = true;
+
+	$('#map').addClass('res-opened');
+    setTimeout(refreshPOV, 1000);
     addPOI();
+    resOpenedOnce = true;
+}
+
+function toggleResPanel() {
+	if ($resPanel.hasClass('opened')) {
+		$resPanel.removeClass('opened');
+	} else {
+		$resPanel.addClass('opened');
+	}
 }
 
 function addPOI() {
@@ -429,7 +443,7 @@ function addAddress(lat, lng, txt, mode) {
 	var $container = $addressContainer,
 		select = $('#mean-select').html();
 	
-	if (resPanelOpened) {
+	if (resOpenedOnce) {
 		$container = $resAddressContainer;
 	}
 		                     
@@ -468,7 +482,7 @@ function addAddress(lat, lng, txt, mode) {
 		$addedMode = $container.find('.mode').last(),
 		$addedMaxTime = $container.find('.max-time').last();
 	
-	if (resPanelOpened) {
+	if (resOpenedOnce) {
 		$addedTable.show();
 	}
 	

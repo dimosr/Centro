@@ -50,6 +50,12 @@
 			<button class="btn btn-default submit">Go!</button>
 		</div>
 	</div>
+	
+	<div class="visible-xs-*" id="hamburger">
+		_<br />
+		_<br />
+		_<br />
+	</div>
 
 	<div id="res-panel">
 		<img src="<c:url value='/img/logo.png'/>" class="logo" />
