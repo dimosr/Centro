@@ -51,10 +51,12 @@
 		</div>
 	</div>
 	
-	<div class="visible-xs-*" id="hamburger">
-		_<br />
-		_<br />
-		_<br />
+	<div id="hamb-hidder" style="display:none;">
+		<div id="hamburger">
+			_<br />
+			_<br />
+			_<br />
+		</div>
 	</div>
 
 	<div id="res-panel">

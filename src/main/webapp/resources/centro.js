@@ -167,7 +167,7 @@ $('#save-button').on('click', function() {
 
 $('#hamburger').on('click', toggleResPanel);
 $(window).resize(function() {
-	if ($(window).width() >= 768 && !$resPanel.hasClass('opened')) {
+	if ($(window).width() >= 768 && !$resPanel.hasClass('opened') && resOpenedOnce) {
 		toggleResPanel();
 	}
 });
@@ -242,6 +242,7 @@ function calcCentralPoint() {
 function firstOpening() {
 	$resAddressContainer.append($addressContainer.find('.address'));
     $resAddressContainer.find('table').show();
+    $('#hamb-hidder').css('display', 'inherit');
              
     $('.grey-bkg').animate({opacity: 0}, 'fast', function() {
     	$('.grey-bkg').remove();
