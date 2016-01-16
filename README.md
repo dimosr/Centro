@@ -71,3 +71,14 @@ The database schema is also versioned, in folder `database` :
 - Execute `schema-init.sql` to create the initial database schema, adding the first data
 
 After changing the database schema, each developer should commit the changes in the schema in a separate script, and also add the necessary query in the script that adds the corresponding record in the table `schema_version`. This table is used to check which scripts have been executed in the current version and their order.
+
+-------
+Application ID
+-------
+Centro uses Google API in the back-end, making use of several features that require an API key.
+In order for Centro to be functional after deployed, define this API key in the properties file `app.properties` in folder `src/main`
+
+-------
+Google Analytics
+-------
+Analytics are by default disabled in Centro. In order to enable them, edit the file `ga.js` in folder `src/main/webapp/resources/analytics`, by changing the value of the global variable ANALYTICS_ENABLED and adjusting the rest properties of the analytics account.
