@@ -1,7 +1,7 @@
 Centro - Find the best meeting point
 ===================
 
-Centro is a software engineering project on which 5 Imperial College students are working.
+Centro is a web-based application, used for getting suggestions about meeting places given several starting points and additional constraints.
 
 ----------
 Requirements
@@ -10,6 +10,7 @@ Requirements
  - Java JDK (1.7 or above)
  - A Tomcat server
  - Maven (Help: https://maven.apache.org/guides/getting-started/maven-in-five-minutes.html)
+ - mySQL 
 
 ----------
 Build with no IDE
@@ -61,3 +62,12 @@ Build using Netbeans
 - Select "Build Project" to build the project
 - Select "Test Project" to execute all Unit Tests
 - Select "Run Project" through Netbeans. Application is now deployed in Tomcat.
+
+-------
+Database versioning
+-------
+The database schema is also versioned, in folder `database` : 
+- Execute `setup.sql` to create the database and the user
+- Execute `schema-init.sql` to create the initial database schema, adding the first data
+
+After changing the database schema, each developer should commit the changes in the schema in a separate script, and also add the necessary query in the script that adds the corresponding record in the table `schema_version`. This table is used to check which scripts have been executed in the current version and their order.
